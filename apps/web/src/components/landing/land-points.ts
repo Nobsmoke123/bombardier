@@ -75,14 +75,23 @@ export function latLngToVector(lat: number, lng: number, radius: number) {
   ] as const;
 }
 
-export function createLandPositions(radius: number, density = 1.15) {
+function seeded(seed: number) {
+  let state = seed >>> 0;
+  return () => {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+}
+
+export function createLandPositions(radius: number, density = 1.15, seed = 20260831) {
   const points: number[] = [];
+  const rand = seeded(seed);
 
   for (let lat = -84; lat <= 84; lat += density) {
     const step = density / Math.max(0.35, Math.cos(lat * DEG));
     for (let lng = -180; lng < 180; lng += step) {
-      const jitterLat = lat + (Math.random() - 0.5) * density * 0.7;
-      const jitterLng = lng + (Math.random() - 0.5) * step * 0.7;
+      const jitterLat = lat + (rand() - 0.5) * density * 0.7;
+      const jitterLng = lng + (rand() - 0.5) * step * 0.7;
       if (!isLand(jitterLat, jitterLng)) continue;
       const [x, y, z] = latLngToVector(jitterLat, jitterLng, radius);
       points.push(x, y, z);

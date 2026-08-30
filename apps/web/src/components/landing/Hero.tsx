@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { HeroReveal } from "./fade-up";
+import { GLOBE_ROLES } from "./globe-roles";
 
 const Earth = dynamic(
   () => import("./Earth").then((mod) => mod.Earth),
@@ -22,7 +23,7 @@ export function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-x-clip">
       <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-8">
         <div className="max-w-xl">
           <HeroReveal>
@@ -66,8 +67,9 @@ export function Hero() {
         >
           <Earth />
           <p className="sr-only">
-            Drag to rotate the globe. Continents are shown as glowing orange
-            points. Zoom is disabled.
+            Drag to rotate the globe. Continents are shown as glowing points.
+            Ten roles travel on orbital paths: {GLOBE_ROLES.join(", ")}. Zoom is
+            disabled.
           </p>
         </motion.div>
       </div>

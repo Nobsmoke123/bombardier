@@ -1,6 +1,6 @@
 "use client";
 
-import { Html, OrbitControls } from "@react-three/drei";
+import { Html, Line, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -10,20 +10,101 @@ import {
   BackSide,
   BufferAttribute,
   BufferGeometry,
+  Color,
   Group,
-  type Points,
+  Vector3,
+  type Camera,
 } from "three";
-import {
-  createLandPositions,
-  createStarPositions,
-  latLngToVector,
-} from "./land-points";
+import { GLOBE_ROLES } from "./globe-roles";
+import { createLandPositions, createStarPositions } from "./land-points";
 
-const LABELS = [
-  { text: "Lagos", lat: 6.52, lng: 3.38 },
-  { text: "Backend Resume", lat: 51.5, lng: -0.12 },
-  { text: "+1 Interview", lat: 40.71, lng: -74.0 },
+type OrbitDef = {
+  normal: [number, number, number];
+  radius: number;
+};
+
+const ORBIT_DEFS: OrbitDef[] = [
+  { normal: [0.1, 1, 0.16], radius: 1.18 },
+  { normal: [0.96, 0.18, 0.22], radius: 1.24 },
+  { normal: [0.14, 0.28, 0.95], radius: 1.15 },
+  { normal: [0.56, 0.74, 0.36], radius: 1.28 },
+  { normal: [-0.7, 0.46, 0.54], radius: 1.21 },
+];
+
+const NODE_MOTION = [
+  { orbit: 0, phase: 0.2, speed: 0.16 },
+  { orbit: 0, phase: 3.35, speed: 0.16 },
+  { orbit: 1, phase: 0.9, speed: 0.13 },
+  { orbit: 1, phase: 4.05, speed: 0.13 },
+  { orbit: 2, phase: 1.5, speed: 0.2 },
+  { orbit: 2, phase: 4.7, speed: 0.2 },
+  { orbit: 3, phase: 0.45, speed: 0.11 },
+  { orbit: 3, phase: 3.6, speed: 0.11 },
+  { orbit: 4, phase: 2.15, speed: 0.15 },
+  { orbit: 4, phase: 5.3, speed: 0.15 },
 ] as const;
+
+const NODES = GLOBE_ROLES.map((title, index) => ({
+  title,
+  ...NODE_MOTION[index],
+}));
+
+const GLOW_VERT = /* glsl */ `
+  varying vec3 vNormal;
+  varying vec3 vView;
+  void main() {
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vNormal = normalize(normalMatrix * normal);
+    vView = normalize(-mv.xyz);
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+
+const GLOW_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  uniform float uStrength;
+  varying vec3 vNormal;
+  varying vec3 vView;
+  void main() {
+    float fresnel = pow(1.0 - abs(dot(vNormal, vView)), 2.55);
+    gl_FragColor = vec4(uColor, fresnel * uStrength);
+  }
+`;
+
+function orbitBasis(normal: [number, number, number]) {
+  const n = new Vector3(...normal).normalize();
+  const tangent = new Vector3();
+  if (Math.abs(n.y) < 0.92) tangent.set(0, 1, 0);
+  else tangent.set(1, 0, 0);
+  tangent.cross(n).normalize();
+  const bitangent = new Vector3().copy(n).cross(tangent).normalize();
+  return { tangent, bitangent };
+}
+
+function writeOrbitPoint(
+  out: Vector3,
+  tangent: Vector3,
+  bitangent: Vector3,
+  radius: number,
+  angle: number,
+) {
+  out.copy(tangent).multiplyScalar(Math.cos(angle) * radius);
+  out.addScaledVector(bitangent, Math.sin(angle) * radius);
+  return out;
+}
+
+function palette(dark: boolean) {
+  return {
+    land: dark ? "#f97316" : "#c2410c",
+    landSoft: dark ? "#fdba74" : "#ea580c",
+    ocean: dark ? "#08080c" : "#f3ebdd",
+    arc: dark ? "#fdba74" : "#c2410c",
+    node: dark ? "#fff7ed" : "#9a3412",
+    glow: dark ? "#f97316" : "#c2410c",
+    bg: dark ? "#09090b" : "#f4efe6",
+    star: "#fafafa",
+  };
+}
 
 function Stars() {
   const geometry = useMemo(() => {
@@ -39,63 +120,228 @@ function Stars() {
   );
 }
 
-function Continents() {
-  const points = useRef<Points>(null);
-  const geometry = useMemo(() => {
+function Continents({
+  color,
+  soft,
+  additive,
+}: {
+  color: string;
+  soft: string;
+  additive: boolean;
+}) {
+  const core = useMemo(() => {
     const geo = new BufferGeometry();
-    geo.setAttribute("position", new BufferAttribute(createLandPositions(1.01, 1.2), 3));
+    geo.setAttribute("position", new BufferAttribute(createLandPositions(1.005, 1.0, 11), 3));
     return geo;
   }, []);
+  const halo = useMemo(() => {
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new BufferAttribute(createLandPositions(1.018, 1.45, 29), 3));
+    return geo;
+  }, []);
+  const blending = additive ? AdditiveBlending : undefined;
 
   return (
-    <points ref={points} geometry={geometry}>
-      <pointsMaterial
-        color="#F97316"
-        size={0.016}
-        sizeAttenuation
-        transparent
-        opacity={0.92}
-        depthWrite={false}
-        blending={AdditiveBlending}
-      />
-    </points>
+    <group>
+      <points geometry={core}>
+        <pointsMaterial
+          color={color}
+          size={0.015}
+          sizeAttenuation
+          transparent
+          opacity={additive ? 0.95 : 0.88}
+          depthWrite={false}
+          blending={blending}
+        />
+      </points>
+      {additive ? (
+        <points geometry={halo}>
+          <pointsMaterial
+            color={soft}
+            size={0.028}
+            sizeAttenuation
+            transparent
+            opacity={0.28}
+            depthWrite={false}
+            blending={AdditiveBlending}
+          />
+        </points>
+      ) : null}
+    </group>
   );
 }
 
-function Atmosphere() {
+function Atmosphere({ color, strength }: { color: string; strength: number }) {
+  const uniforms = useMemo(
+    () => ({
+      uColor: { value: new Color(color) },
+      uStrength: { value: strength },
+    }),
+    [color, strength],
+  );
+
   return (
-    <mesh>
-      <sphereGeometry args={[1.08, 48, 48]} />
-      <meshBasicMaterial
-        color="#F97316"
-        transparent
-        opacity={0.07}
-        side={BackSide}
-        depthWrite={false}
-      />
-    </mesh>
+    <group>
+      <mesh scale={1.12}>
+        <sphereGeometry args={[1, 64, 64]} />
+        <shaderMaterial
+          uniforms={uniforms}
+          vertexShader={GLOW_VERT}
+          fragmentShader={GLOW_FRAG}
+          transparent
+          depthWrite={false}
+          side={BackSide}
+          blending={AdditiveBlending}
+        />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[1.06, 48, 48]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={strength * 0.12}
+          side={BackSide}
+          depthWrite={false}
+          blending={AdditiveBlending}
+        />
+      </mesh>
+    </group>
   );
 }
 
-function FloatingLabels() {
+function OrbitArcs({
+  orbits,
+  color,
+  opacity,
+}: {
+  orbits: { points: [number, number, number][] }[];
+  color: string;
+  opacity: number;
+}) {
   return (
     <>
-      {LABELS.map((label) => {
-        const [x, y, z] = latLngToVector(label.lat, label.lng, 1.16);
-        return (
-          <Html key={label.text} position={[x, y, z]} distanceFactor={5} zIndexRange={[10, 0]}>
-            <div className="rounded-sm border border-line bg-surface/90 px-2.5 py-1 text-[11px] whitespace-nowrap text-ink shadow-none backdrop-blur-sm">
-              {label.text}
-            </div>
-          </Html>
-        );
-      })}
+      {orbits.map((orbit, index) => (
+        <Line
+          key={index}
+          points={orbit.points}
+          color={color}
+          lineWidth={1.15}
+          transparent
+          opacity={opacity}
+          depthWrite={false}
+          toneMapped={false}
+        />
+      ))}
     </>
+  );
+}
+
+function OrbitNode({
+  title,
+  tangent,
+  bitangent,
+  radius,
+  phase,
+  speed,
+  reduceMotion,
+  nodeColor,
+  glowColor,
+}: {
+  title: string;
+  tangent: Vector3;
+  bitangent: Vector3;
+  radius: number;
+  phase: number;
+  speed: number;
+  reduceMotion: boolean;
+  nodeColor: string;
+  glowColor: string;
+}) {
+  const group = useRef<Group>(null);
+  const label = useRef<HTMLDivElement>(null);
+  const local = useMemo(() => new Vector3(), []);
+  const world = useMemo(() => new Vector3(), []);
+  const center = useMemo(() => new Vector3(), []);
+  const start = useMemo(() => {
+    const point = new Vector3();
+    writeOrbitPoint(point, tangent, bitangent, radius, phase);
+    return point;
+  }, [tangent, bitangent, radius, phase]);
+
+  function place(time: number, camera?: Camera) {
+    if (!group.current) return;
+    const angle = reduceMotion ? phase : phase + time * speed;
+    writeOrbitPoint(local, tangent, bitangent, radius, angle);
+    group.current.position.copy(local);
+
+    if (!label.current || !camera || !group.current.parent) return;
+    world.copy(group.current.position).normalize();
+    center.copy(camera.position);
+    group.current.parent.worldToLocal(center).normalize();
+    const facing = world.dot(center);
+    const opacity = Math.max(0, Math.min(1, (facing - 0.28) * 3.2));
+    label.current.style.opacity = String(opacity);
+    label.current.style.visibility = opacity < 0.08 ? "hidden" : "visible";
+  }
+
+  useFrame(({ clock, camera }) => {
+    place(clock.elapsedTime, camera);
+  });
+
+  return (
+    <group ref={group} position={start}>
+      <mesh>
+        <sphereGeometry args={[0.024, 16, 16]} />
+        <meshBasicMaterial color={nodeColor} toneMapped={false} />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[0.05, 16, 16]} />
+        <meshBasicMaterial
+          color={glowColor}
+          transparent
+          opacity={0.28}
+          depthWrite={false}
+          blending={AdditiveBlending}
+          toneMapped={false}
+        />
+      </mesh>
+      <Html
+        center
+        sprite
+        zIndexRange={[20, 0]}
+        wrapperClass="pointer-events-none !overflow-visible"
+        style={{ pointerEvents: "none" }}
+      >
+        <div
+          ref={label}
+          className="-translate-y-5 border border-line bg-surface px-2 py-0.5 text-[10px] tracking-wide whitespace-nowrap text-ink"
+        >
+          {title}
+        </div>
+      </Html>
+    </group>
   );
 }
 
 function Globe({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean }) {
   const group = useRef<Group>(null);
+  const colors = palette(dark);
+
+  const orbits = useMemo(
+    () =>
+      ORBIT_DEFS.map((def) => {
+        const basis = orbitBasis(def.normal);
+        const points: [number, number, number][] = [];
+        const scratch = new Vector3();
+        const segments = 128;
+        for (let i = 0; i <= segments; i += 1) {
+          writeOrbitPoint(scratch, basis.tangent, basis.bitangent, def.radius, (i / segments) * Math.PI * 2);
+          points.push([scratch.x, scratch.y, scratch.z]);
+        }
+        return { ...basis, radius: def.radius, points };
+      }),
+    [],
+  );
 
   useFrame(({ clock }) => {
     if (!group.current || reduceMotion) return;
@@ -106,25 +352,44 @@ function Globe({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean })
     <group ref={group}>
       <mesh>
         <sphereGeometry args={[1, 64, 64]} />
-        <meshStandardMaterial
-          color={dark ? "#0c0c10" : "#ddd6c8"}
-          roughness={0.92}
-          metalness={0.08}
+        <meshBasicMaterial
+          color={colors.ocean}
+          transparent={dark}
+          opacity={dark ? 0.55 : 1}
         />
       </mesh>
-      <Continents />
-      <Atmosphere />
-      <FloatingLabels />
+      <Continents color={colors.land} soft={colors.landSoft} additive={dark} />
+      <Atmosphere color={colors.glow} strength={dark ? 0.86 : 0.22} />
+      <OrbitArcs orbits={orbits} color={colors.arc} opacity={dark ? 0.55 : 0.38} />
+      {NODES.map((node) => {
+        const orbit = orbits[node.orbit];
+        return (
+          <OrbitNode
+            key={node.title}
+            title={node.title}
+            tangent={orbit.tangent}
+            bitangent={orbit.bitangent}
+            radius={orbit.radius}
+            phase={node.phase}
+            speed={node.speed}
+            reduceMotion={reduceMotion}
+            nodeColor={colors.node}
+            glowColor={colors.glow}
+          />
+        );
+      })}
     </group>
   );
 }
 
 function Scene({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean }) {
+  const colors = palette(dark);
+
   return (
     <>
-      <color attach="background" args={[dark ? "#09090B" : "#F4EFE6"]} />
-      <ambientLight intensity={dark ? 0.35 : 0.55} />
-      <directionalLight position={[3, 2, 4]} intensity={0.7} color="#fff7ed" />
+      <color attach="background" args={[colors.bg]} />
+      <ambientLight intensity={dark ? 0.28 : 0.5} />
+      <directionalLight position={[3, 2, 4]} intensity={dark ? 0.55 : 0.7} color="#fff7ed" />
       {dark ? <Stars /> : null}
       <Globe reduceMotion={reduceMotion} dark={dark} />
       <OrbitControls
@@ -148,8 +413,7 @@ export function Earth() {
   return (
     <div className="relative h-[22rem] w-full sm:h-[28rem] lg:h-[min(36rem,72vh)]">
       <Canvas
-        key={dark ? "dark" : "light"}
-        camera={{ position: [0, 0.15, 3.05], fov: 42 }}
+        camera={{ position: [0.28, 0.12, 2.85], fov: 40 }}
         dpr={[1, 1.6]}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         onCreated={({ gl }) => {
