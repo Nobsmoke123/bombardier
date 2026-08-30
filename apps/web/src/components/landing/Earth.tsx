@@ -95,7 +95,7 @@ function writeOrbitPoint(
 
 function palette(dark: boolean) {
   return {
-    land: dark ? "#f97316" : "#c2410c",
+    land: dark ? "#f97316" : "#1c1915",
     landSoft: dark ? "#fdba74" : "#ea580c",
     ocean: dark ? "#08080c" : "#f3ebdd",
     arc: dark ? "#fdba74" : "#c2410c",
