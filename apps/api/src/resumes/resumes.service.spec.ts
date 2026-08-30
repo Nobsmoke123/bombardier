@@ -97,10 +97,19 @@ describe('ResumesService', () => {
 
     await service.remove(userId, resume.id);
 
-    expect(storage.deleteObject).toHaveBeenCalledWith(userId, resume.fileKey);
     expect(prisma.resume.delete).toHaveBeenCalledWith({
       where: { id: resume.id },
     });
+    expect(storage.deleteObject).toHaveBeenCalledWith(userId, resume.fileKey);
+  });
+
+  it('still removes the database row if the object is already gone', async () => {
+    prisma.resume.findFirst.mockResolvedValue(resume);
+    prisma.resume.delete.mockResolvedValue(resume);
+    storage.deleteObject.mockRejectedValue(new Error('NoSuchKey'));
+
+    await expect(service.remove(userId, resume.id)).resolves.toBeUndefined();
+    expect(prisma.resume.delete).toHaveBeenCalled();
   });
 
   it('404s when the resume is missing', async () => {

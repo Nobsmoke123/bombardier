@@ -145,6 +145,29 @@ describe('DashboardService', () => {
     });
   });
 
+  it('does not treat dated unapplied companies as activity', async () => {
+    prisma.company.count.mockResolvedValue(1);
+    prisma.resume.count.mockResolvedValue(0);
+    prisma.application.count.mockResolvedValue(0);
+    prisma.application.findMany.mockResolvedValue([
+      {
+        id: 'a1',
+        status: ApplicationStatus.NOT_APPLIED,
+        linkedinOutreach: false,
+        resumeId: null,
+        resume: null,
+        applicationDate: new Date('2026-08-30T09:00:00.000Z'),
+        company: { id: 'c1', name: 'Acme' },
+      },
+    ]);
+    prisma.linkedInContact.findMany.mockResolvedValue([]);
+
+    const stats = await service.stats(userId);
+
+    expect(stats.recentActivity).toEqual([]);
+    expect(stats.applied).toBe(0);
+  });
+
   it('returns only remaining unapplied companies for today', async () => {
     prisma.application.count.mockResolvedValue(18);
     prisma.company.findMany.mockResolvedValue([

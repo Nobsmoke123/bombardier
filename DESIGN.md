@@ -40,10 +40,10 @@ A personal job-search command center: quiet, editorial, and operational — not 
 ## Components carrying brand identity (build from scratch)
 
 - [x] Auth entry (login / register) — first surface a user meets
-- [ ] Dashboard command header
-- [ ] Daily queue (today's companies)
-- [ ] Primary navigation
+- [x] Dashboard command header
+- [x] Daily queue (today's companies)
+- [x] Primary navigation
 
 ## Reference sites studied
 
-Auth milestone only — full visual research lands with the frontend UI milestone. Tokens above are locked so login/register do not drift.
+Editorial ops tools (paper ground, ink type, a single amber mark) rather than marketplace ATS templates. Tokens stay locked so later surfaces do not drift.

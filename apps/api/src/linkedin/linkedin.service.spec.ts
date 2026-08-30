@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConnectionStatus } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -77,6 +77,18 @@ describe('LinkedInService', () => {
 
     expect(result.status).toBe('ACCEPTED');
     expect(prisma.application.update).toHaveBeenCalled();
+  });
+
+  it('rejects whitespace-only names', async () => {
+    prisma.application.findFirst.mockResolvedValue({ id: applicationId });
+
+    await expect(
+      service.create(userId, applicationId, {
+        name: '   ',
+        position: 'Engineer',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(prisma.linkedInContact.create).not.toHaveBeenCalled();
   });
 
   it('404s when the application is not owned', async () => {

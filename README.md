@@ -42,7 +42,7 @@ The API never receives file bytes. The browser:
 
 1. Calls `POST /storage/presign` for a short-lived PUT URL
 2. Uploads the PDF or CSV **directly to Cloudflare R2**
-3. Asks the API to persist metadata (later milestones)
+3. Asks the API to persist metadata (`POST /resumes` or `POST /companies/import`)
 4. Calls `GET /storage/view?key=...` for a 15-minute signed GET URL
 
 CSV company imports enqueue a BullMQ job. Redis must be running (`docker compose up -d`). Expected columns: `name` (or `company` / `company_name`), optional `website` and `industry`.

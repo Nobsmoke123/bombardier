@@ -43,11 +43,20 @@ export function CompanyForm({
         linkedinMessage: values.linkedinMessage || null,
         status: values.status,
         applicationDate: values.applicationDate
-          ? new Date(values.applicationDate).toISOString()
+          ? `${values.applicationDate}T00:00:00.000Z`
           : null,
         linkedinOutreach: values.linkedinOutreach,
       }),
-    onSuccess: async () => {
+    onSuccess: async (result) => {
+      form.reset({
+        role: result.application.role,
+        resumeId: result.application.resumeId ?? "",
+        coverLetter: result.application.coverLetter ?? "",
+        linkedinMessage: result.application.linkedinMessage ?? "",
+        status: result.application.status,
+        applicationDate: result.application.applicationDate?.slice(0, 10) ?? "",
+        linkedinOutreach: result.application.linkedinOutreach,
+      });
       toastSuccess("Application saved.");
       await queryClient.invalidateQueries({ queryKey: ["companies"] });
       await queryClient.invalidateQueries({ queryKey: ["dashboard"] });

@@ -71,10 +71,7 @@ export class DashboardService {
         select: { status: true },
       }),
       this.prisma.application.count({
-        where: {
-          company: { userId },
-          applicationDate: { gte: start, lt: end },
-        },
+        where: appliedOnUtcDay(userId, start, end),
       }),
       this.prisma.resume.findMany({
         where: { userId },
@@ -166,10 +163,18 @@ export class DashboardService {
         resumeId,
         ...value,
       })),
-      timeline: buildTimeline(applications),
+      timeline: buildTimeline(
+        applications.filter(
+          (application) => application.status !== ApplicationStatus.NOT_APPLIED,
+        ),
+      ),
       recentActivity: [
         ...applications
-          .filter((application) => application.applicationDate)
+          .filter(
+            (application) =>
+              application.applicationDate &&
+              application.status !== ApplicationStatus.NOT_APPLIED,
+          )
           .map((application) => ({
             id: `application-${application.id}`,
             type: 'application' as const,
@@ -206,10 +211,7 @@ export class DashboardService {
 
     const { start, end } = utcDayRange();
     const appliedToday = await this.prisma.application.count({
-      where: {
-        company: { userId },
-        applicationDate: { gte: start, lt: end },
-      },
+      where: appliedOnUtcDay(userId, start, end),
     });
     const remaining = Math.max(0, user.dailyTarget - appliedToday);
 
@@ -236,6 +238,14 @@ export class DashboardService {
       remaining,
     };
   }
+}
+
+function appliedOnUtcDay(userId: string, start: Date, end: Date) {
+  return {
+    company: { userId },
+    status: { not: ApplicationStatus.NOT_APPLIED },
+    applicationDate: { gte: start, lt: end },
+  };
 }
 
 function emptyBreakdown(): Record<ApplicationStatus, number> {

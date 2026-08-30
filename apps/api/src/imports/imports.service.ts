@@ -92,7 +92,7 @@ export class ImportsService {
       );
       const parsed = await this.csv.parseCompanies(buffer);
 
-      await this.prisma.company.createMany({
+      const inserted = await this.prisma.company.createMany({
         data: parsed.rows.map((row) => ({
           userId: data.userId,
           name: row.name,
@@ -108,8 +108,8 @@ export class ImportsService {
         where: { id: record.id },
         data: {
           totalRows: parsed.totalRows,
-          uniqueRows: parsed.uniqueRows,
-          duplicatesRemoved: parsed.duplicatesRemoved,
+          uniqueRows: inserted.count,
+          duplicatesRemoved: parsed.totalRows - inserted.count,
           status: CsvImportStatus.COMPLETED,
           error: null,
         },

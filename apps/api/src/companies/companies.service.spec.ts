@@ -118,6 +118,21 @@ describe('CompaniesService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it('keeps linkedinOutreach true when contacts already exist', async () => {
+    prisma.company.findFirst.mockResolvedValue({
+      ...company,
+      application: { ...application, connectionCount: 2, linkedinOutreach: true },
+    });
+    prisma.application.update.mockResolvedValue(application);
+
+    await service.update(userId, companyId, { linkedinOutreach: false });
+
+    expect(prisma.application.update).toHaveBeenCalledWith({
+      where: { id: application.id },
+      data: expect.objectContaining({ linkedinOutreach: true }),
+    });
+  });
+
   it('404s when the company is missing', async () => {
     prisma.company.findFirst.mockResolvedValue(null);
 

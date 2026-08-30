@@ -129,4 +129,39 @@ describe('ImportsService', () => {
       },
     });
   });
+
+  it('counts existing companies as duplicates, not new unique rows', async () => {
+    prisma.csvImport.findFirst.mockResolvedValue(record);
+    storage.getObjectBuffer.mockResolvedValue(Buffer.from('name\nAcme\nAcme'));
+    csv.parseCompanies.mockResolvedValue({
+      rows: [
+        {
+          name: 'Acme',
+          normalizedName: 'acme',
+          website: null,
+          industry: null,
+        },
+      ],
+      totalRows: 2,
+      uniqueRows: 1,
+      duplicatesRemoved: 1,
+    });
+    prisma.company.createMany.mockResolvedValue({ count: 0 });
+    prisma.company.findMany.mockResolvedValue([]);
+    prisma.application.createMany.mockResolvedValue({ count: 0 });
+    prisma.csvImport.update.mockResolvedValue(record);
+
+    await service.processJob({ importId: record.id, userId });
+
+    expect(prisma.csvImport.update).toHaveBeenCalledWith({
+      where: { id: record.id },
+      data: {
+        totalRows: 2,
+        uniqueRows: 0,
+        duplicatesRemoved: 2,
+        status: CsvImportStatus.COMPLETED,
+        error: null,
+      },
+    });
+  });
 });

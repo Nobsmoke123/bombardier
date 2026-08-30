@@ -26,11 +26,6 @@ export class ImportsController {
     return this.imports.enqueue(user.id, dto);
   }
 
-  @Get('imports')
-  findAll(@CurrentUser() user: UserPublic): Promise<CsvImportPublic[]> {
-    return this.imports.findAll(user.id);
-  }
-
   @Get('imports/:id')
   findOne(
     @CurrentUser() user: UserPublic,

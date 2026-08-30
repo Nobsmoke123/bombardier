@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import type { LinkedInContactPublic } from '@job-tracker/types';
 import type { LinkedInContact } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -15,12 +15,17 @@ export class LinkedInService {
     dto: CreateLinkedInContactDto,
   ): Promise<LinkedInContactPublic> {
     await this.requireOwnedApplication(userId, applicationId);
+    const name = dto.name.trim();
+    const position = dto.position.trim();
+    if (!name || !position) {
+      throw new BadRequestException('Name and position are required');
+    }
 
     const contact = await this.prisma.linkedInContact.create({
       data: {
         applicationId,
-        name: dto.name.trim(),
-        position: dto.position.trim(),
+        name,
+        position,
         status: dto.status,
         conversationNotes: dto.conversationNotes?.trim() ?? '',
       },

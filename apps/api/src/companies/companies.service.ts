@@ -115,7 +115,12 @@ export class CompaniesService {
           : {}),
         ...(dto.status !== undefined ? { status: dto.status } : {}),
         ...(dto.linkedinOutreach !== undefined
-          ? { linkedinOutreach: dto.linkedinOutreach }
+          ? {
+              linkedinOutreach:
+                company.application!.connectionCount > 0
+                  ? true
+                  : dto.linkedinOutreach,
+            }
           : {}),
         applied,
         applicationDate,

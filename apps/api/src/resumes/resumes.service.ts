@@ -62,8 +62,12 @@ export class ResumesService {
 
   async remove(userId: string, id: string): Promise<void> {
     const resume = await this.requireOwned(userId, id);
-    await this.storage.deleteObject(userId, resume.fileKey);
     await this.prisma.resume.delete({ where: { id: resume.id } });
+    try {
+      await this.storage.deleteObject(userId, resume.fileKey);
+    } catch {
+      // Keep the delete successful if the object is already gone.
+    }
   }
 
   private async requireOwned(userId: string, id: string): Promise<Resume> {

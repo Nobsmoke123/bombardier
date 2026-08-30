@@ -36,7 +36,19 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
   });
 
   const text = await response.text();
-  const data: unknown = text ? JSON.parse(text) : null;
+  let data: unknown = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new ApiError({
+        statusCode: response.ok ? 500 : response.status,
+        message: response.ok
+          ? "The server returned an unexpected response"
+          : text.slice(0, 200) || "Request failed",
+      });
+    }
+  }
 
   if (response.status === 204) {
     return undefined as T;
