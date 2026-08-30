@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   DeleteObjectCommand,
@@ -75,6 +75,23 @@ export class StorageService {
       key,
       expiresIn: VIEW_EXPIRES_IN,
     };
+  }
+
+  async getObjectBuffer(userId: string, key: string): Promise<Buffer> {
+    assertOwnedObjectKey(userId, key);
+    const { client, bucket } = this.s3();
+    const result = await client.send(
+      new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }),
+    );
+
+    if (!result.Body) {
+      throw new NotFoundException('Object not found in storage');
+    }
+
+    return Buffer.from(await result.Body.transformToByteArray());
   }
 
   async deleteObject(userId: string, key: string): Promise<void> {

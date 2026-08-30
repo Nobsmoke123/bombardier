@@ -15,6 +15,8 @@ model User {
   dailyTarget Int      @default(20)
   createdAt   DateTime @default(now())
   resumes     Resume[]
+  companies   Company[]
+  csvImports  CsvImport[]
 }
 
 enum ResumeFocus {
@@ -32,6 +34,42 @@ model Resume {
   focus     ResumeFocus
   fileKey   String      @unique
   createdAt DateTime    @default(now())
+
+  @@index([userId])
+}
+
+model Company {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @db.Uuid
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  normalizedName String
+  website        String?
+  industry       String?
+  createdAt      DateTime @default(now())
+
+  @@unique([userId, normalizedName])
+  @@index([userId])
+}
+
+enum CsvImportStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model CsvImport {
+  id                 String          @id @default(uuid()) @db.Uuid
+  userId             String          @db.Uuid
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  filename           String
+  objectKey          String
+  totalRows          Int             @default(0)
+  uniqueRows         Int             @default(0)
+  duplicatesRemoved  Int             @default(0)
+  status             CsvImportStatus @default(PENDING)
+  error              String?
+  createdAt          DateTime        @default(now())
 
   @@index([userId])
 }

@@ -46,6 +46,15 @@ export function assertResumeFileKey(userId: string, key: string): void {
   }
 }
 
+export function assertImportFileKey(userId: string, key: string): void {
+  assertOwnedObjectKey(userId, key);
+  if (!key.startsWith(`users/${userId}/imports/`) || !key.toLowerCase().endsWith('.csv')) {
+    throw new BadRequestException(
+      'objectKey must be a CSV uploaded by this user',
+    );
+  }
+}
+
 export function assertUploadMatchesFolder(
   folder: StorageFolder,
   filename: string,

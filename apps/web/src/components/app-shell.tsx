@@ -7,6 +7,7 @@ import { logoutRequest } from "@/lib/auth";
 
 const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/companies", label: "Companies" },
   { href: "/resumes", label: "Resumes" },
 ];
 

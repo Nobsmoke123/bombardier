@@ -14,6 +14,11 @@ export const FOLDER_RULES: Record<
   },
   imports: {
     extension: 'csv',
-    contentTypes: ['text/csv', 'application/csv'],
+    contentTypes: [
+      'text/csv',
+      'application/csv',
+      'application/vnd.ms-excel',
+      'text/plain',
+    ],
   },
 };

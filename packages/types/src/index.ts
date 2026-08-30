@@ -75,3 +75,23 @@ export type CreateResumeRequest = {
   focus: ResumeFocus;
   fileKey: string;
 };
+
+export const CSV_IMPORT_STATUSES = ["PENDING", "COMPLETED", "FAILED"] as const;
+export type CsvImportStatus = (typeof CSV_IMPORT_STATUSES)[number];
+
+export type CsvImportPublic = {
+  id: string;
+  filename: string;
+  objectKey: string;
+  totalRows: number;
+  uniqueRows: number;
+  duplicatesRemoved: number;
+  status: CsvImportStatus;
+  error: string | null;
+  createdAt: string;
+};
+
+export type CreateCsvImportRequest = {
+  filename: string;
+  objectKey: string;
+};

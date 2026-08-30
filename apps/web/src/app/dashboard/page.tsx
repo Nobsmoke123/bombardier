@@ -14,7 +14,7 @@ export default function DashboardPage() {
   return (
     <AppShell
       title="You are in."
-      lede="Resumes upload directly to R2. Companies, outreach, and the daily queue come next."
+      lede="Resumes and company CSVs upload directly to R2. Outreach and the daily queue come next."
     >
       <section className="border-t border-line pt-8">
         <h2 className="text-sm text-muted">Signed in as</h2>
@@ -38,9 +38,12 @@ export default function DashboardPage() {
             </div>
           </dl>
         )}
-        <p className="mt-8">
+        <p className="mt-8 flex flex-wrap gap-5">
           <Link href="/resumes" className="underline underline-offset-4 hover:text-amber">
             Manage resumes
+          </Link>
+          <Link href="/companies" className="underline underline-offset-4 hover:text-amber">
+            Import companies
           </Link>
         </p>
       </section>

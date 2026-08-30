@@ -7,7 +7,7 @@ Personal job application tracking platform (ATS MVP).
 - **Web:** Next.js 16, Tailwind CSS, TanStack Query
 - **API:** NestJS, Prisma, JWT
 - **Data:** Neon PostgreSQL (local Postgres via Docker)
-- **Jobs:** BullMQ + Redis (later milestone)
+- **Jobs:** BullMQ + Redis for CSV company imports
 - **Storage:** Cloudflare R2 via presigned URLs (files never pass through the API)
 
 ## Prerequisites
@@ -44,6 +44,8 @@ The API never receives file bytes. The browser:
 2. Uploads the PDF or CSV **directly to Cloudflare R2**
 3. Asks the API to persist metadata (later milestones)
 4. Calls `GET /storage/view?key=...` for a 15-minute signed GET URL
+
+CSV company imports enqueue a BullMQ job. Redis must be running (`docker compose up -d`). Expected columns: `name` (or `company` / `company_name`), optional `website` and `industry`.
 
 Object keys only:
 

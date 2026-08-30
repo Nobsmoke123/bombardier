@@ -1,5 +1,6 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import {
+  assertImportFileKey,
   assertOwnedObjectKey,
   assertResumeFileKey,
   assertUploadMatchesFolder,
@@ -44,6 +45,12 @@ describe('storage.keys', () => {
   it('rejects a resume that is not a PDF', () => {
     expect(() =>
       assertUploadMatchesFolder('resumes', 'notes.txt', 'application/pdf'),
+    ).toThrow(BadRequestException);
+  });
+
+  it('rejects a resume key when an import key is required', () => {
+    expect(() =>
+      assertImportFileKey(userId, `users/${userId}/resumes/file.pdf`),
     ).toThrow(BadRequestException);
   });
 
