@@ -16,6 +16,13 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
+  updateDailyTarget(id: string, dailyTarget: number): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: { dailyTarget },
+    });
+  }
+
   create(data: {
     name: string;
     email: string;

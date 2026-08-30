@@ -8,6 +8,7 @@ import { ImportsModule } from './imports/imports.module.js';
 import { LinkedInModule } from './linkedin/linkedin.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { ResumesModule } from './resumes/resumes.module.js';
+import { SettingsModule } from './settings/settings.module.js';
 import { StorageModule } from './storage/storage.module.js';
 import { UsersModule } from './users/users.module.js';
 
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module.js';
     CompaniesModule,
     LinkedInModule,
     DashboardModule,
+    SettingsModule,
   ],
   controllers: [AppController],
 })

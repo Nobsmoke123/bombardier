@@ -6,6 +6,14 @@ export type UserPublic = {
   createdAt: string;
 };
 
+export type SettingsPublic = {
+  dailyTarget: number;
+};
+
+export type UpdateSettingsRequest = {
+  dailyTarget: number;
+};
+
 export type AuthSuccessResponse = {
   user: UserPublic;
 };
