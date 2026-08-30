@@ -47,3 +47,25 @@ A personal job-search command center: quiet, editorial, and operational — not 
 ## Reference sites studied
 
 Editorial ops tools (paper ground, ink type, a single amber mark) rather than marketplace ATS templates. Tokens stay locked so later surfaces do not drift.
+
+## Marketing landing (public homepage)
+
+A second register for acquisition only. The signed-in product stays paper/ink. The landing is night-ops: zinc black, one orange signal, Newsreader + Geist so it is still Bombardier and not a Vercel clone.
+
+Borrowed with intent:
+
+- Linear — sticky blurred nav, one accent, no chrome noise
+- Vercel — split hero with the product artifact on the right
+- Cloudflare — globe as the product story, not a stock illustration
+- Stripe — large operational numbers instead of lifestyle photography
+
+### Landing tokens
+
+- Background: `#09090B`
+- Surface: `#111113`
+- Border: `#27272A`
+- Accent: `#F97316`
+- Text: white / zinc-400
+- Primary CTA: orange fill + near-black label (white-on-orange fails WCAG AA)
+- Motion: hero fade/slide only on load; sections fade-up on scroll; card hover is a 150ms lift
+- Reduced motion: static globe, final stat numbers, no float/auto-rotate

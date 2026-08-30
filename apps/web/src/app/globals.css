@@ -9,6 +9,10 @@
   --color-forest: #1f3d2b;
   --color-error: #9f1239;
   --color-line: #d8d0c2;
+  --color-void: #09090b;
+  --color-void-surface: #111113;
+  --color-void-line: #27272a;
+  --color-signal: #f97316;
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-newsreader);
 }
@@ -36,4 +40,8 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-ink);
   outline-offset: 3px;
+}
+
+.landing :focus-visible {
+  outline-color: #fafafa;
 }
