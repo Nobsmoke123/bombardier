@@ -14,4 +14,24 @@ model User {
   password    String
   dailyTarget Int      @default(20)
   createdAt   DateTime @default(now())
+  resumes     Resume[]
+}
+
+enum ResumeFocus {
+  BACKEND
+  FULLSTACK
+  FRONTEND
+  DEVOPS
+}
+
+model Resume {
+  id        String      @id @default(uuid()) @db.Uuid
+  userId    String      @db.Uuid
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  focus     ResumeFocus
+  fileKey   String      @unique
+  createdAt DateTime    @default(now())
+
+  @@index([userId])
 }

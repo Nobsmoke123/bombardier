@@ -52,3 +52,26 @@ export type PresignViewResponse = {
   key: string;
   expiresIn: number;
 };
+
+export const RESUME_FOCUSES = [
+  "BACKEND",
+  "FULLSTACK",
+  "FRONTEND",
+  "DEVOPS",
+] as const;
+
+export type ResumeFocus = (typeof RESUME_FOCUSES)[number];
+
+export type ResumePublic = {
+  id: string;
+  title: string;
+  focus: ResumeFocus;
+  fileKey: string;
+  createdAt: string;
+};
+
+export type CreateResumeRequest = {
+  title: string;
+  focus: ResumeFocus;
+  fileKey: string;
+};

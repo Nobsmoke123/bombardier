@@ -1,42 +1,22 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { logoutRequest, meRequest } from "@/lib/auth";
+import Link from "next/link";
+import { AppShell } from "@/components/app-shell";
+import { meRequest } from "@/lib/auth";
 
 export default function DashboardPage() {
-  const router = useRouter();
   const session = useQuery({
     queryKey: ["auth", "me"],
     queryFn: meRequest,
   });
 
-  async function onLogout() {
-    await logoutRequest();
-    router.push("/login");
-    router.refresh();
-  }
-
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col px-6 py-16 sm:px-8">
-      <div className="flex items-baseline justify-between gap-4">
-        <p className="font-display text-sm tracking-wide text-amber">Job Tracker</p>
-        <button
-          type="button"
-          onClick={onLogout}
-          className="text-sm text-muted underline underline-offset-4 hover:text-ink"
-        >
-          Sign out
-        </button>
-      </div>
-      <h1 className="mt-8 font-display text-5xl leading-none tracking-tight">
-        You are in.
-      </h1>
-      <p className="mt-5 max-w-xl text-muted">
-        Authentication is live. The rest of the tracker — resumes, companies, and
-        the daily queue — lands in later milestones.
-      </p>
-      <section className="mt-10 border-t border-line pt-8">
+    <AppShell
+      title="You are in."
+      lede="Resumes upload directly to R2. Companies, outreach, and the daily queue come next."
+    >
+      <section className="border-t border-line pt-8">
         <h2 className="text-sm text-muted">Signed in as</h2>
         {session.isLoading ? (
           <p className="mt-3 text-ink">Loading session…</p>
@@ -58,7 +38,12 @@ export default function DashboardPage() {
             </div>
           </dl>
         )}
+        <p className="mt-8">
+          <Link href="/resumes" className="underline underline-offset-4 hover:text-amber">
+            Manage resumes
+          </Link>
+        </p>
       </section>
-    </main>
+    </AppShell>
   );
 }

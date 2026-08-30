@@ -38,6 +38,10 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
   const text = await response.text();
   const data: unknown = text ? JSON.parse(text) : null;
 
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
   if (!response.ok) {
     const payload = data as ApiErrorResponse | null;
     throw new ApiError({

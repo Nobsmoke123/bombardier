@@ -4,7 +4,7 @@ const apiOrigin =
   process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@job-tracker/types"],
+  transpilePackages: ["@job-tracker/types", "react-pdf", "pdfjs-dist"],
   async rewrites() {
     return [
       {

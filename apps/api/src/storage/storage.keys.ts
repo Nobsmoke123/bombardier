@@ -37,6 +37,15 @@ export function assertOwnedObjectKey(userId: string, key: string): void {
   }
 }
 
+export function assertResumeFileKey(userId: string, key: string): void {
+  assertOwnedObjectKey(userId, key);
+  if (!key.startsWith(`users/${userId}/resumes/`) || !key.toLowerCase().endsWith('.pdf')) {
+    throw new BadRequestException(
+      'fileKey must be a resume PDF uploaded by this user',
+    );
+  }
+}
+
 export function assertUploadMatchesFolder(
   folder: StorageFolder,
   filename: string,
