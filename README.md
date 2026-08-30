@@ -1,4 +1,4 @@
-# Job Tracker
+# Bombardier
 
 Personal job application tracking platform (ATS MVP).
 

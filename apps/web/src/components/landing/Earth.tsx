@@ -3,6 +3,7 @@
 import { Html, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
+import { useTheme } from "next-themes";
 import { useMemo, useRef } from "react";
 import {
   AdditiveBlending,
@@ -83,7 +84,7 @@ function FloatingLabels() {
         const [x, y, z] = latLngToVector(label.lat, label.lng, 1.16);
         return (
           <Html key={label.text} position={[x, y, z]} distanceFactor={5} zIndexRange={[10, 0]}>
-            <div className="rounded-sm border border-void-line bg-void-surface/90 px-2.5 py-1 text-[11px] whitespace-nowrap text-zinc-200 shadow-none backdrop-blur-sm">
+            <div className="rounded-sm border border-line bg-surface/90 px-2.5 py-1 text-[11px] whitespace-nowrap text-ink shadow-none backdrop-blur-sm">
               {label.text}
             </div>
           </Html>
@@ -93,7 +94,7 @@ function FloatingLabels() {
   );
 }
 
-function Globe({ reduceMotion }: { reduceMotion: boolean }) {
+function Globe({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean }) {
   const group = useRef<Group>(null);
 
   useFrame(({ clock }) => {
@@ -105,7 +106,11 @@ function Globe({ reduceMotion }: { reduceMotion: boolean }) {
     <group ref={group}>
       <mesh>
         <sphereGeometry args={[1, 64, 64]} />
-        <meshStandardMaterial color="#0c0c10" roughness={0.92} metalness={0.08} />
+        <meshStandardMaterial
+          color={dark ? "#0c0c10" : "#ddd6c8"}
+          roughness={0.92}
+          metalness={0.08}
+        />
       </mesh>
       <Continents />
       <Atmosphere />
@@ -114,14 +119,14 @@ function Globe({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-function Scene({ reduceMotion }: { reduceMotion: boolean }) {
+function Scene({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean }) {
   return (
     <>
-      <color attach="background" args={["#09090B"]} />
-      <ambientLight intensity={0.35} />
+      <color attach="background" args={[dark ? "#09090B" : "#F4EFE6"]} />
+      <ambientLight intensity={dark ? 0.35 : 0.55} />
       <directionalLight position={[3, 2, 4]} intensity={0.7} color="#fff7ed" />
-      <Stars />
-      <Globe reduceMotion={reduceMotion} />
+      {dark ? <Stars /> : null}
+      <Globe reduceMotion={reduceMotion} dark={dark} />
       <OrbitControls
         enableZoom={false}
         enablePan={false}
@@ -137,10 +142,13 @@ function Scene({ reduceMotion }: { reduceMotion: boolean }) {
 
 export function Earth() {
   const reduceMotion = useReducedMotion() ?? false;
+  const { resolvedTheme } = useTheme();
+  const dark = resolvedTheme !== "light";
 
   return (
     <div className="relative h-[22rem] w-full sm:h-[28rem] lg:h-[min(36rem,72vh)]">
       <Canvas
+        key={dark ? "dark" : "light"}
         camera={{ position: [0, 0.15, 3.05], fov: 42 }}
         dpr={[1, 1.6]}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
@@ -148,7 +156,7 @@ export function Earth() {
           gl.domElement.style.touchAction = "none";
         }}
       >
-        <Scene reduceMotion={reduceMotion} />
+        <Scene reduceMotion={reduceMotion} dark={dark} />
       </Canvas>
     </div>
   );

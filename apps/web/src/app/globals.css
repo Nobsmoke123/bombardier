@@ -1,21 +1,43 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: light;
+  --paper: #f4efe6;
+  --surface: #fffbf4;
+  --ink: #1c1915;
+  --muted: #5c564c;
+  --amber: #c2410c;
+  --forest: #1f3d2b;
+  --error: #9f1239;
+  --line: #d8d0c2;
+}
+
+.dark {
+  color-scheme: dark;
+  --paper: #09090b;
+  --surface: #111113;
+  --ink: #fafafa;
+  --muted: #a1a1aa;
+  --amber: #f97316;
+  --forest: #86efac;
+  --error: #fb7185;
+  --line: #27272a;
+}
+
 @theme inline {
-  --color-paper: #f4efe6;
-  --color-surface: #fffbf4;
-  --color-ink: #1c1915;
-  --color-muted: #5c564c;
-  --color-amber: #b45309;
-  --color-forest: #1f3d2b;
-  --color-error: #9f1239;
-  --color-line: #d8d0c2;
-  --color-void: #09090b;
-  --color-void-surface: #111113;
-  --color-void-line: #27272a;
-  --color-signal: #f97316;
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-amber: var(--amber);
+  --color-forest: var(--forest);
+  --color-error: var(--error);
+  --color-line: var(--line);
   --font-sans: var(--font-geist-sans);
   --font-display: var(--font-newsreader);
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -28,20 +50,16 @@
 }
 
 html {
-  background: var(--color-paper);
+  background: var(--paper);
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--paper);
+  color: var(--ink);
   font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-ink);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
-}
-
-.landing :focus-visible {
-  outline-color: #fafafa;
 }

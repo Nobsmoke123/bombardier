@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center px-6 py-16 sm:px-8">
-      <p className="font-display text-sm tracking-wide text-amber">Job Tracker</p>
+      <div className="flex items-center justify-between gap-4">
+        <p className="font-display text-sm tracking-wide text-amber">Bombardier</p>
+        <ThemeToggle />
+      </div>
       <h1 className="mt-6 font-display text-5xl leading-none tracking-tight">
         Page not found.
       </h1>

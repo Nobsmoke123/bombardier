@@ -1,4 +1,4 @@
-# Job Tracker — Design System
+# Bombardier — Design System
 
 ## Brand lane
 
@@ -14,14 +14,25 @@ A personal job-search command center: quiet, editorial, and operational — not 
 
 ## Color
 
-- Background (base): `#F4EFE6` warm paper
-- Background (raised/surface): `#FFFBF4`
-- Foreground (primary text): `#1C1915` ink
-- Foreground (muted/secondary text): `#5C564C`
-- Accent (primary): `#B45309` burnt amber — CTAs only
-- Accent (secondary): `#1F3D2B` deep forest, used sparingly for success / applied
-- Semantic: success `#1F3D2B` / warning `#92400E` / error `#9F1239` / info `#1E3A5F`
-- Contrast: ink on paper and amber-on-paper labels meet WCAG AA. Primary CTA is amber fill + paper text at large size, or ink fill if a pairing fails 4.5:1.
+Semantic tokens swap with the site theme (`html.dark` / light). One toggle controls landing, auth, and the product.
+
+Light
+
+- Background: `#F4EFE6` paper
+- Surface: `#FFFBF4`
+- Text: `#1C1915` / `#5C564C`
+- Accent: `#C2410C`
+- Line: `#D8D0C2`
+
+Dark
+
+- Background: `#09090B`
+- Surface: `#111113`
+- Text: `#FAFAFA` / `#A1A1AA`
+- Accent: `#F97316`
+- Line: `#27272A`
+
+Primary CTA: amber fill + paper-colored label so contrast holds in both themes.
 
 ## Spacing
 
@@ -50,7 +61,7 @@ Editorial ops tools (paper ground, ink type, a single amber mark) rather than ma
 
 ## Marketing landing (public homepage)
 
-A second register for acquisition only. The signed-in product stays paper/ink. The landing is night-ops: zinc black, one orange signal, Newsreader + Geist so it is still Bombardier and not a Vercel clone.
+Acquisition and product share one token set. Dark is night-ops; light is the original paper register. Newsreader + Geist stay in both.
 
 Borrowed with intent:
 

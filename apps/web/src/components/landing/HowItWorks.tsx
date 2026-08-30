@@ -33,11 +33,11 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="border-t border-void-line py-24">
+    <section className="border-t border-line py-24">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <FadeUp>
-          <p className="text-sm text-signal">How it works</p>
-          <h2 className="mt-3 font-display text-4xl tracking-tight text-white sm:text-5xl">
+          <p className="text-sm text-amber">How it works</p>
+          <h2 className="mt-3 font-display text-4xl tracking-tight text-ink sm:text-5xl">
             Three moves. Then the data talks.
           </h2>
         </FadeUp>
@@ -46,17 +46,17 @@ export function HowItWorks() {
             <li key={step.title} className="relative">
               {index < STEPS.length - 1 ? (
                 <div
-                  className="pointer-events-none absolute top-5 left-14 hidden h-px w-[calc(100%-1rem)] bg-void-line lg:block"
+                  className="pointer-events-none absolute top-5 left-14 hidden h-px w-[calc(100%-1rem)] bg-line lg:block"
                   aria-hidden="true"
                 />
               ) : null}
               <FadeUp delay={index * 0.06} className="flex flex-col gap-4">
                 <div className="flex items-center gap-4">
-                  <span className="text-signal">{step.icon}</span>
-                  <span className="text-sm text-zinc-500">0{index + 1}</span>
+                  <span className="text-amber">{step.icon}</span>
+                  <span className="text-sm text-muted">0{index + 1}</span>
                 </div>
-                <h3 className="font-display text-2xl text-white">{step.title}</h3>
-                <p className="max-w-[36ch] text-sm leading-relaxed text-zinc-400">{step.body}</p>
+                <h3 className="font-display text-2xl text-ink">{step.title}</h3>
+                <p className="max-w-[36ch] text-sm leading-relaxed text-muted">{step.body}</p>
               </FadeUp>
             </li>
           ))}

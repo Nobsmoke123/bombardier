@@ -58,7 +58,7 @@ function CountUp({
   }, [started, value, reduce]);
 
   return (
-    <p ref={ref} className="mt-4 font-display text-5xl tracking-tight text-white">
+    <p ref={ref} className="mt-4 font-display text-5xl tracking-tight text-ink">
       {formatValue(reduce ? value : shown, decimals, suffix)}
     </p>
   );
@@ -66,11 +66,11 @@ function CountUp({
 
 export function LiveStats() {
   return (
-    <section className="border-t border-void-line">
-      <div className="mx-auto grid max-w-6xl gap-px bg-void-line px-0 sm:grid-cols-3">
+    <section className="border-t border-line">
+      <div className="mx-auto grid max-w-6xl gap-px bg-line px-0 sm:grid-cols-3">
         {STATS.map((stat, index) => (
-          <FadeUp key={stat.label} delay={index * 0.05} className="bg-void px-5 py-10 sm:px-8">
-            <p className="text-sm text-zinc-400">{stat.label}</p>
+          <FadeUp key={stat.label} delay={index * 0.05} className="bg-paper px-5 py-10 sm:px-8">
+            <p className="text-sm text-muted">{stat.label}</p>
             <CountUp
               value={stat.value}
               decimals={"decimals" in stat ? stat.decimals : 0}

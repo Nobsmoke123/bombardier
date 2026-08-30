@@ -8,7 +8,7 @@ export function CTA() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden border-t border-void-line py-28">
+    <section className="relative overflow-hidden border-t border-line py-28">
       <motion.div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0"
@@ -27,16 +27,16 @@ export function CTA() {
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <FadeUp className="relative mx-auto max-w-3xl px-5 text-center sm:px-8">
-        <h2 className="font-display text-4xl tracking-tight text-white sm:text-6xl">
+        <h2 className="font-display text-4xl tracking-tight text-ink sm:text-6xl">
           Ready to land your next opportunity?
         </h2>
-        <p className="mx-auto mt-5 max-w-[42ch] text-base text-zinc-400">
+        <p className="mx-auto mt-5 max-w-[42ch] text-base text-muted">
           Create a free account, import the companies you already have, and let
           today’s queue tell you what to send next.
         </p>
         <Link
           href="/register"
-          className="mt-10 inline-flex bg-signal px-8 py-4 text-base text-void transition-opacity duration-150 hover:opacity-90"
+          className="mt-10 inline-flex bg-amber px-8 py-4 text-base text-paper transition-opacity duration-150 hover:opacity-90"
         >
           Create your free account
         </Link>

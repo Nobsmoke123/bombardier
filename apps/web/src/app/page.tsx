@@ -10,7 +10,7 @@ import { WhyBombardier } from "@/components/landing/WhyBombardier";
 
 export default function HomePage() {
   return (
-    <div className="landing min-h-dvh bg-void text-white">
+    <div className="min-h-dvh bg-paper text-ink">
       <Navbar />
       <main>
         <Hero />

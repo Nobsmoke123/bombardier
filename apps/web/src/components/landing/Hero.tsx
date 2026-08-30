@@ -11,7 +11,7 @@ const Earth = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="h-[22rem] w-full bg-void-surface sm:h-[28rem] lg:h-[min(36rem,72vh)]"
+        className="h-[22rem] w-full bg-surface sm:h-[28rem] lg:h-[min(36rem,72vh)]"
         aria-hidden="true"
       />
     ),
@@ -26,17 +26,17 @@ export function Hero() {
       <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-8">
         <div className="max-w-xl">
           <HeroReveal>
-            <p className="inline-flex border border-void-line bg-void-surface px-3 py-1 text-xs tracking-wide text-signal">
+            <p className="inline-flex border border-line bg-surface px-3 py-1 text-xs tracking-wide text-amber">
               Strategic Job Application Command Center
             </p>
           </HeroReveal>
           <HeroReveal delay={0.06}>
-            <h1 className="mt-6 font-display text-6xl leading-none tracking-tight text-white sm:text-7xl lg:text-8xl">
+            <h1 className="mt-6 font-display text-6xl leading-none tracking-tight text-ink sm:text-7xl lg:text-8xl">
               Bombardier
             </h1>
           </HeroReveal>
           <HeroReveal delay={0.12}>
-            <p className="mt-6 max-w-[38ch] text-base leading-relaxed text-zinc-400 sm:text-lg">
+            <p className="mt-6 max-w-[38ch] text-base leading-relaxed text-muted sm:text-lg">
               Track every application, measure what works, and systematically
               manage your global job search from one intelligent dashboard.
             </p>
@@ -44,13 +44,13 @@ export function Hero() {
           <HeroReveal delay={0.18} className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="/register"
-              className="bg-signal px-5 py-3 text-sm text-void transition-opacity duration-150 hover:opacity-90"
+              className="bg-amber px-5 py-3 text-sm text-paper transition-opacity duration-150 hover:opacity-90"
             >
               Get Started
             </Link>
             <a
               href="#analytics"
-              className="border border-void-line px-5 py-3 text-sm text-zinc-200 transition-colors duration-150 hover:border-zinc-500 hover:text-white"
+              className="border border-line px-5 py-3 text-sm text-ink transition-colors duration-150 hover:border-ink"
             >
               View Demo
             </a>

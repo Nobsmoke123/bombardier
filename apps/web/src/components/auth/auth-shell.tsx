@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 type AuthShellProps = {
   title: string;
@@ -10,7 +12,12 @@ type AuthShellProps = {
 export function AuthShell({ title, lede, children, footer }: AuthShellProps) {
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center px-6 py-16 sm:px-8">
-      <p className="font-display text-sm tracking-wide text-amber">Job Tracker</p>
+      <div className="flex items-center justify-between gap-4">
+        <Link href="/" className="font-display text-sm tracking-wide text-amber">
+          Bombardier
+        </Link>
+        <ThemeToggle />
+      </div>
       <h1 className="mt-6 font-display text-5xl leading-none tracking-tight text-ink sm:text-6xl">
         {title}
       </h1>

@@ -15,14 +15,14 @@ export function WhyBombardier() {
   const reduce = useReducedMotion();
 
   return (
-    <section id="about" className="scroll-mt-24 border-t border-void-line py-24">
+    <section id="about" className="scroll-mt-24 border-t border-line py-24">
       <div className="mx-auto grid max-w-6xl items-start gap-14 px-5 sm:px-8 lg:grid-cols-2">
         <FadeUp>
-          <p className="text-sm text-signal">Why Bombardier</p>
-          <h2 className="mt-3 font-display text-4xl tracking-tight text-white sm:text-5xl">
+          <p className="text-sm text-amber">Why Bombardier</p>
+          <h2 className="mt-3 font-display text-4xl tracking-tight text-ink sm:text-5xl">
             Stop guessing. Start measuring.
           </h2>
-          <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-zinc-400">
+          <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-muted">
             A successful search is an optimization problem, not a numbers game.
             Volume without signal wastes months. Bombardier tells you which
             resume, which message, and which companies actually move — so the
@@ -30,14 +30,14 @@ export function WhyBombardier() {
           </p>
         </FadeUp>
         <FadeUp delay={0.08}>
-          <ul className="grid gap-4 border-t border-void-line pt-2">
+          <ul className="grid gap-4 border-t border-line pt-2">
             {ITEMS.map((item, index) => (
               <li
                 key={item}
-                className="flex items-center gap-4 border-b border-void-line py-4 text-white"
+                className="flex items-center gap-4 border-b border-line py-4 text-ink"
               >
                 <motion.span
-                  className="flex h-6 w-6 items-center justify-center border border-signal text-signal"
+                  className="flex h-6 w-6 items-center justify-center border border-amber text-amber"
                   initial={reduce ? false : { scale: 0.7, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
                   viewport={{ once: true }}

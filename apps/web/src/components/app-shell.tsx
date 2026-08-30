@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { logoutRequest } from "@/lib/auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -34,9 +35,9 @@ export function AppShell({
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-6 py-10 sm:px-8">
-      <header className="flex flex-wrap items-baseline justify-between gap-4 border-b border-line pb-6">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-6">
         <Link href="/dashboard" className="font-display text-sm tracking-wide text-amber">
-          Job Tracker
+          Bombardier
         </Link>
         <nav aria-label="Primary" className="flex flex-wrap items-center gap-5 text-sm">
           {LINKS.map((link) => {
@@ -57,6 +58,7 @@ export function AppShell({
               </Link>
             );
           })}
+          <ThemeToggle />
           <button
             type="button"
             onClick={onLogout}
