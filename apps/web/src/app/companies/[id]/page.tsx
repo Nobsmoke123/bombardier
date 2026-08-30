@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { CompanyForm } from "@/components/companies/company-form";
+import { LinkedInContacts } from "@/components/linkedin/linkedin-contacts";
 import { getCompany } from "@/lib/companies";
 import { listResumes } from "@/lib/resumes";
 
@@ -22,7 +23,7 @@ export default function CompanyDetailPage() {
   return (
     <AppShell
       title={company.data?.name ?? "Company"}
-      lede="Set the role, attach a resume, and move the application through each stage. LinkedIn contacts come next."
+      lede="Set the role, attach a resume, and track the people you message on LinkedIn."
       action={
         <Link href="/companies" className="text-sm underline underline-offset-4 hover:text-amber">
           Back to companies
@@ -48,7 +49,13 @@ export default function CompanyDetailPage() {
           {company.error.message}
         </p>
       ) : company.data ? (
-        <CompanyForm company={company.data} resumes={resumes.data ?? []} />
+        <>
+          <CompanyForm company={company.data} resumes={resumes.data ?? []} />
+          <LinkedInContacts
+            applicationId={company.data.application.id}
+            connectionCount={company.data.application.connectionCount}
+          />
+        </>
       ) : null}
     </AppShell>
   );

@@ -36,6 +36,9 @@ export function CompaniesTable({ companies }: { companies: CompanyPublic[] }) {
             <th scope="col" className="py-3 pr-4 font-normal">
               Applied
             </th>
+            <th scope="col" className="py-3 pr-4 font-normal">
+              LinkedIn
+            </th>
             <th scope="col" className="py-3 font-normal">
               <span className="sr-only">Open</span>
             </th>
@@ -63,6 +66,9 @@ export function CompaniesTable({ companies }: { companies: CompanyPublic[] }) {
                 {company.application.applicationDate
                   ? formatDate(company.application.applicationDate)
                   : "—"}
+              </td>
+              <td className="py-4 pr-4 text-muted">
+                {company.application.connectionCount}
               </td>
               <td className="py-4 text-right">
                 <Link

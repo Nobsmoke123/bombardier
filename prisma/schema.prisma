@@ -78,9 +78,28 @@ model Application {
   connectionCount  Int               @default(0)
   applicationDate  DateTime?
   status           ApplicationStatus @default(NOT_APPLIED)
+  linkedinContacts LinkedInContact[]
 
   @@index([status])
   @@index([resumeId])
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  CONVERSING
+}
+
+model LinkedInContact {
+  id                 String           @id @default(uuid()) @db.Uuid
+  applicationId      String           @db.Uuid
+  application        Application      @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  name               String
+  position           String
+  status             ConnectionStatus @default(PENDING)
+  conversationNotes  String           @default("")
+
+  @@index([applicationId])
 }
 
 enum CsvImportStatus {

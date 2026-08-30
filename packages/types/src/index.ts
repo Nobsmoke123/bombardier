@@ -147,3 +147,34 @@ export type UpdateCompanyRequest = {
   applicationDate?: string | null;
   linkedinOutreach?: boolean;
 };
+
+export const CONNECTION_STATUSES = [
+  "PENDING",
+  "ACCEPTED",
+  "CONVERSING",
+] as const;
+
+export type ConnectionStatus = (typeof CONNECTION_STATUSES)[number];
+
+export type LinkedInContactPublic = {
+  id: string;
+  applicationId: string;
+  name: string;
+  position: string;
+  status: ConnectionStatus;
+  conversationNotes: string;
+};
+
+export type CreateLinkedInContactRequest = {
+  name: string;
+  position: string;
+  status?: ConnectionStatus;
+  conversationNotes?: string;
+};
+
+export type UpdateLinkedInContactRequest = {
+  name?: string;
+  position?: string;
+  status?: ConnectionStatus;
+  conversationNotes?: string;
+};
