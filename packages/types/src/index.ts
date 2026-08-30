@@ -178,3 +178,35 @@ export type UpdateLinkedInContactRequest = {
   status?: ConnectionStatus;
   conversationNotes?: string;
 };
+
+export type ResumePerformance = {
+  resumeId: string;
+  title: string;
+  applied: number;
+  interviews: number;
+  offers: number;
+};
+
+export type DashboardStats = {
+  totalCompanies: number;
+  applied: number;
+  notApplied: number;
+  totalResumes: number;
+  rejectionRate: number;
+  interviewRate: number;
+  offerRate: number;
+  linkedinSuccessRate: number;
+  totalLinkedinOutreach: number;
+  dailyTarget: number;
+  todaysRemaining: number;
+  appliedToday: number;
+  statusBreakdown: Record<ApplicationStatus, number>;
+  resumePerformance: ResumePerformance[];
+};
+
+export type TodayQueueResponse = {
+  items: CompanyPublic[];
+  dailyTarget: number;
+  appliedToday: number;
+  remaining: number;
+};

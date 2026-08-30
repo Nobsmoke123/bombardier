@@ -1,52 +1,91 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
-import { meRequest } from "@/lib/auth";
+import { AnalyticsCard } from "@/components/dashboard/analytics-card";
+import { ApplicationStatusChart } from "@/components/dashboard/application-status-chart";
+import { MetricCard } from "@/components/dashboard/metric-card";
+import { ProgressCard } from "@/components/dashboard/progress-card";
+import { ResumePerformanceChart } from "@/components/dashboard/resume-performance-chart";
+import { TodayQueue } from "@/components/dashboard/today-queue";
+import { formatRate, getDashboardStats, getTodayQueue } from "@/lib/dashboard";
 
 export default function DashboardPage() {
-  const session = useQuery({
-    queryKey: ["auth", "me"],
-    queryFn: meRequest,
+  const stats = useQuery({
+    queryKey: ["dashboard", "stats"],
+    queryFn: getDashboardStats,
+  });
+  const today = useQuery({
+    queryKey: ["dashboard", "today"],
+    queryFn: getTodayQueue,
   });
 
   return (
     <AppShell
-      title="You are in."
-      lede="Resumes and company CSVs upload directly to R2. Outreach and the daily queue come next."
+      title="Today."
+      lede="How the search is going, and the next companies to touch before the day is done."
     >
-      <section className="border-t border-line pt-8">
-        <h2 className="text-sm text-muted">Signed in as</h2>
-        {session.isLoading ? (
-          <p className="mt-3 text-ink">Loading session…</p>
-        ) : session.error ? (
-          <p className="mt-3 text-error">{session.error.message}</p>
-        ) : (
-          <dl className="mt-4 grid gap-3 text-base">
-            <div>
-              <dt className="text-muted">Name</dt>
-              <dd>{session.data?.user.name}</dd>
-            </div>
-            <div>
-              <dt className="text-muted">Email</dt>
-              <dd>{session.data?.user.email}</dd>
-            </div>
-            <div>
-              <dt className="text-muted">Daily target</dt>
-              <dd>{session.data?.user.dailyTarget} applications</dd>
-            </div>
-          </dl>
-        )}
-        <p className="mt-8 flex flex-wrap gap-5">
-          <Link href="/resumes" className="underline underline-offset-4 hover:text-amber">
-            Manage resumes
-          </Link>
-          <Link href="/companies" className="underline underline-offset-4 hover:text-amber">
-            Import companies
-          </Link>
+      {stats.isLoading ? (
+        <p className="text-muted">Loading analytics…</p>
+      ) : stats.error ? (
+        <p role="alert" className="text-error">
+          {stats.error.message}
         </p>
-      </section>
+      ) : stats.data ? (
+        <>
+          <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <MetricCard
+              label="Total applied"
+              value={stats.data.applied}
+              hint={`${stats.data.notApplied} still outstanding`}
+            />
+            <MetricCard
+              label="Outstanding"
+              value={stats.data.notApplied}
+              hint={`${stats.data.totalCompanies} companies in the list`}
+            />
+            <MetricCard
+              label="Interview rate"
+              value={formatRate(stats.data.interviewRate)}
+              hint={`Offer rate ${formatRate(stats.data.offerRate)}`}
+            />
+            <MetricCard
+              label="LinkedIn success"
+              value={formatRate(stats.data.linkedinSuccessRate)}
+              hint={`${stats.data.totalLinkedinOutreach} outreach records`}
+            />
+          </section>
+          <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+            <AnalyticsCard title="Application stages">
+              <ApplicationStatusChart breakdown={stats.data.statusBreakdown} />
+            </AnalyticsCard>
+            <AnalyticsCard title="Today’s companies">
+              <ProgressCard
+                label="Daily target"
+                value={stats.data.appliedToday}
+                max={stats.data.dailyTarget}
+              />
+              <p className="mt-4 mb-6 text-sm text-muted">
+                {stats.data.todaysRemaining} remaining today.
+              </p>
+              {today.isLoading ? (
+                <p className="text-muted">Loading today’s queue…</p>
+              ) : today.error ? (
+                <p role="alert" className="text-error">
+                  {today.error.message}
+                </p>
+              ) : today.data ? (
+                <TodayQueue queue={today.data} />
+              ) : null}
+            </AnalyticsCard>
+          </div>
+          <div className="mt-12">
+            <AnalyticsCard title="Resume performance">
+              <ResumePerformanceChart rows={stats.data.resumePerformance} />
+            </AnalyticsCard>
+          </div>
+        </>
+      ) : null}
     </AppShell>
   );
 }
