@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { AppShell } from "@/components/app-shell";
 import { Field } from "@/components/auth/field";
 import { getSettings, updateSettings } from "@/lib/settings";
+import { toastError, toastSuccess } from "@/lib/toast";
 import { settingsSchema, type SettingsValues } from "@/lib/validation/settings";
 
 export default function SettingsPage() {
@@ -30,10 +31,12 @@ export default function SettingsPage() {
     mutationFn: (values: SettingsValues) => updateSettings(values),
     onSuccess: async (result) => {
       form.reset({ dailyTarget: result.dailyTarget });
+      toastSuccess(`Target saved. Today’s remaining count now uses ${result.dailyTarget}.`);
       await queryClient.invalidateQueries({ queryKey: ["settings"] });
       await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       await queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
     },
+    onError: (error) => toastError(error, "Could not save the target"),
   });
 
   return (

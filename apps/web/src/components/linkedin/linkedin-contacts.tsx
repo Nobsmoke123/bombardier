@@ -11,6 +11,7 @@ import {
   listLinkedInContacts,
   updateLinkedInContact,
 } from "@/lib/linkedin";
+import { toastError, toastSuccess } from "@/lib/toast";
 import {
   createLinkedInContactSchema,
   type CreateLinkedInContactValues,
@@ -49,9 +50,12 @@ export function LinkedInContacts({
         status: "PENDING",
         conversationNotes: "",
       });
+      toastSuccess("Contact added.");
       await queryClient.invalidateQueries({ queryKey: ["linkedin", applicationId] });
       await queryClient.invalidateQueries({ queryKey: ["companies"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
+    onError: (error) => toastError(error, "Could not add the contact"),
   });
 
   return (
@@ -151,11 +155,14 @@ function ContactRow({ contact }: { contact: LinkedInContactPublic }) {
     mutationFn: (body: { status?: typeof contact.status; conversationNotes?: string }) =>
       updateLinkedInContact(contact.id, body),
     onSuccess: async () => {
+      toastSuccess("Contact updated.");
       await queryClient.invalidateQueries({
         queryKey: ["linkedin", contact.applicationId],
       });
       await queryClient.invalidateQueries({ queryKey: ["companies"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
+    onError: (error) => toastError(error, "Could not update the contact"),
   });
 
   return (

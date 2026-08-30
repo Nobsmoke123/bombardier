@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { Field } from "@/components/auth/field";
 import { STATUS_LABELS } from "@/lib/application-labels";
 import { updateCompany } from "@/lib/companies";
+import { toastError, toastSuccess } from "@/lib/toast";
 import {
   updateCompanySchema,
   type UpdateCompanyValues,
@@ -47,8 +48,11 @@ export function CompanyForm({
         linkedinOutreach: values.linkedinOutreach,
       }),
     onSuccess: async () => {
+      toastSuccess("Application saved.");
       await queryClient.invalidateQueries({ queryKey: ["companies"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
+    onError: (error) => toastError(error, "Could not save the application"),
   });
 
   return (

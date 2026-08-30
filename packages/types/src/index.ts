@@ -195,6 +195,19 @@ export type ResumePerformance = {
   offers: number;
 };
 
+export type TimelinePoint = {
+  date: string;
+  applied: number;
+};
+
+export type ActivityItem = {
+  id: string;
+  type: "application" | "import" | "resume";
+  label: string;
+  at: string;
+  href: string;
+};
+
 export type DashboardStats = {
   totalCompanies: number;
   applied: number;
@@ -210,6 +223,8 @@ export type DashboardStats = {
   appliedToday: number;
   statusBreakdown: Record<ApplicationStatus, number>;
   resumePerformance: ResumePerformance[];
+  timeline: TimelinePoint[];
+  recentActivity: ActivityItem[];
 };
 
 export type TodayQueueResponse = {

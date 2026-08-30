@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { registerRequest } from "@/lib/auth";
+import { toastError } from "@/lib/toast";
 import { registerSchema, type RegisterValues } from "@/lib/validation/auth";
 import { Field } from "./field";
 
@@ -21,6 +22,7 @@ export function RegisterForm() {
       router.push("/dashboard");
       router.refresh();
     },
+    onError: (error) => toastError(error, "Could not create the account"),
   });
 
   return (

@@ -16,6 +16,7 @@ import { ensureDefaultApplications } from '../companies/ensure-applications.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { UsersService } from '../users/users.service.js';
 import { rate, utcDayRange } from './dashboard.math.js';
+import { buildTimeline } from './dashboard.timeline.js';
 
 const INTERVIEW_STATUSES: ApplicationStatus[] = [
   ApplicationStatus.HR_STAGE,
@@ -53,12 +54,17 @@ export class DashboardService {
       applications,
       contacts,
       appliedToday,
+      recentResumes,
+      recentImports,
     ] = await Promise.all([
       this.prisma.company.count({ where: { userId } }),
       this.prisma.resume.count({ where: { userId } }),
       this.prisma.application.findMany({
         where: { company: { userId } },
-        include: { resume: { select: { id: true, title: true } } },
+        include: {
+          resume: { select: { id: true, title: true } },
+          company: { select: { id: true, name: true } },
+        },
       }),
       this.prisma.linkedInContact.findMany({
         where: { application: { company: { userId } } },
@@ -69,6 +75,18 @@ export class DashboardService {
           company: { userId },
           applicationDate: { gte: start, lt: end },
         },
+      }),
+      this.prisma.resume.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: { id: true, title: true, createdAt: true },
+      }),
+      this.prisma.csvImport.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: { id: true, filename: true, createdAt: true },
       }),
     ]);
 
@@ -148,6 +166,34 @@ export class DashboardService {
         resumeId,
         ...value,
       })),
+      timeline: buildTimeline(applications),
+      recentActivity: [
+        ...applications
+          .filter((application) => application.applicationDate)
+          .map((application) => ({
+            id: `application-${application.id}`,
+            type: 'application' as const,
+            label: `Applied to ${application.company.name}`,
+            at: application.applicationDate!.toISOString(),
+            href: `/companies/${application.company.id}`,
+          })),
+        ...recentResumes.map((resume) => ({
+          id: `resume-${resume.id}`,
+          type: 'resume' as const,
+          label: `Uploaded ${resume.title}`,
+          at: resume.createdAt.toISOString(),
+          href: `/resumes/${resume.id}`,
+        })),
+        ...recentImports.map((item) => ({
+          id: `import-${item.id}`,
+          type: 'import' as const,
+          label: `Imported ${item.filename}`,
+          at: item.createdAt.toISOString(),
+          href: '/companies',
+        })),
+      ]
+        .sort((a, b) => b.at.localeCompare(a.at))
+        .slice(0, 8),
     };
   }
 

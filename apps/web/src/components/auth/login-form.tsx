@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { loginRequest } from "@/lib/auth";
+import { toastError } from "@/lib/toast";
 import { loginSchema, type LoginValues } from "@/lib/validation/auth";
 import { Field } from "./field";
 
@@ -21,6 +22,7 @@ export function LoginForm() {
       router.push("/dashboard");
       router.refresh();
     },
+    onError: (error) => toastError(error, "Could not sign in"),
   });
 
   return (

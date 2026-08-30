@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 import { uploadCompaniesCsv } from "@/lib/imports";
+import { toastError, toastSuccess } from "@/lib/toast";
 import { csvUploadSchema, type CsvUploadValues } from "@/lib/validation/import";
 
 export function CsvUploader() {
@@ -16,8 +17,12 @@ export function CsvUploader() {
     mutationFn: (values: CsvUploadValues) => uploadCompaniesCsv(values.file),
     onSuccess: async () => {
       form.reset();
+      toastSuccess("Import queued. Stats appear when the worker finishes.");
       await queryClient.invalidateQueries({ queryKey: ["imports"] });
+      await queryClient.invalidateQueries({ queryKey: ["companies"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
+    onError: (error) => toastError(error, "Could not queue the import"),
   });
 
   return (

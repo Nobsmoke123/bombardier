@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { Field } from "@/components/auth/field";
 import { FOCUS_LABELS } from "@/lib/resume-labels";
 import { uploadResumePdf } from "@/lib/resumes";
+import { toastError, toastSuccess } from "@/lib/toast";
 import {
   resumeUploadSchema,
   type ResumeUploadValues,
@@ -28,8 +29,11 @@ export function ResumeUploader() {
       }),
     onSuccess: async () => {
       form.reset({ title: "", focus: "BACKEND" });
+      toastSuccess("Resume stored.");
       await queryClient.invalidateQueries({ queryKey: ["resumes"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
+    onError: (error) => toastError(error, "Could not upload the resume"),
   });
 
   return (

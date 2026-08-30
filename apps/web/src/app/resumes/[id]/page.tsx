@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { FOCUS_LABELS, formatDate } from "@/lib/resume-labels";
 import { deleteResume, getResume, viewResume } from "@/lib/resumes";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 const PdfPreviewModal = dynamic(
   () =>
@@ -35,9 +36,12 @@ export default function ResumeDetailPage() {
   const remove = useMutation({
     mutationFn: () => deleteResume(id),
     onSuccess: async () => {
+      toastSuccess("Resume deleted.");
       await queryClient.invalidateQueries({ queryKey: ["resumes"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
       router.push("/resumes");
     },
+    onError: (error) => toastError(error, "Could not delete the resume"),
   });
 
   return (

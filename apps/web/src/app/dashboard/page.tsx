@@ -1,11 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { AnalyticsCard } from "@/components/dashboard/analytics-card";
 import { ApplicationStatusChart } from "@/components/dashboard/application-status-chart";
+import { ApplicationTimelineChart } from "@/components/dashboard/application-timeline-chart";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { ProgressCard } from "@/components/dashboard/progress-card";
+import { RecentActivity } from "@/components/dashboard/recent-activity";
 import { ResumePerformanceChart } from "@/components/dashboard/resume-performance-chart";
 import { TodayQueue } from "@/components/dashboard/today-queue";
 import { formatRate, getDashboardStats, getTodayQueue } from "@/lib/dashboard";
@@ -24,6 +27,11 @@ export default function DashboardPage() {
     <AppShell
       title="Today."
       lede="How the search is going, and the next companies to touch before the day is done."
+      action={
+        <Link href="/settings" className="text-sm underline underline-offset-4 hover:text-amber">
+          Adjust daily target
+        </Link>
+      }
     >
       {stats.isLoading ? (
         <p className="text-muted">Loading analytics…</p>
@@ -33,7 +41,7 @@ export default function DashboardPage() {
         </p>
       ) : stats.data ? (
         <>
-          <section className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard
               label="Total applied"
               value={stats.data.applied}
@@ -54,10 +62,16 @@ export default function DashboardPage() {
               value={formatRate(stats.data.linkedinSuccessRate)}
               hint={`${stats.data.totalLinkedinOutreach} outreach records`}
             />
-          </section>
+          </div>
           <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-            <AnalyticsCard title="Application stages">
-              <ApplicationStatusChart breakdown={stats.data.statusBreakdown} />
+            <AnalyticsCard title="Application timeline">
+              <ApplicationTimelineChart points={stats.data.timeline} />
+              <p className="mt-4 text-sm text-muted">
+                Applications logged over the last 14 days.
+              </p>
+              <div className="mt-8">
+                <ApplicationStatusChart breakdown={stats.data.statusBreakdown} />
+              </div>
             </AnalyticsCard>
             <AnalyticsCard title="Today’s companies">
               <ProgressCard
@@ -79,9 +93,12 @@ export default function DashboardPage() {
               ) : null}
             </AnalyticsCard>
           </div>
-          <div className="mt-12">
+          <div className="mt-12 grid gap-10 lg:grid-cols-2">
             <AnalyticsCard title="Resume performance">
               <ResumePerformanceChart rows={stats.data.resumePerformance} />
+            </AnalyticsCard>
+            <AnalyticsCard title="Recent activity">
+              <RecentActivity items={stats.data.recentActivity} />
             </AnalyticsCard>
           </div>
         </>

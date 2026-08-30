@@ -13,7 +13,8 @@ describe('DashboardService', () => {
       count: vi.fn(),
       findMany: vi.fn(),
     },
-    resume: { count: vi.fn() },
+    resume: { count: vi.fn(), findMany: vi.fn() },
+    csvImport: { findMany: vi.fn() },
     application: {
       findMany: vi.fn(),
       count: vi.fn(),
@@ -28,6 +29,8 @@ describe('DashboardService', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     prisma.company.findMany.mockResolvedValue([]);
+    prisma.resume.findMany.mockResolvedValue([]);
+    prisma.csvImport.findMany.mockResolvedValue([]);
     prisma.application.createMany.mockResolvedValue({ count: 0 });
     users.findById.mockResolvedValue({
       id: userId,
@@ -93,6 +96,53 @@ describe('DashboardService', () => {
     expect(stats.dailyTarget).toBe(20);
     expect(stats.todaysRemaining).toBe(17);
     expect(stats.resumePerformance[0]?.applied).toBe(2);
+    expect(stats.timeline).toHaveLength(14);
+    expect(stats.recentActivity).toEqual([]);
+  });
+
+  it('builds recent activity from applications, resumes, and imports', async () => {
+    prisma.company.count.mockResolvedValue(1);
+    prisma.resume.count.mockResolvedValue(1);
+    prisma.application.count.mockResolvedValue(1);
+    prisma.application.findMany.mockResolvedValue([
+      {
+        id: 'a1',
+        status: ApplicationStatus.APPLIED,
+        linkedinOutreach: false,
+        resumeId: null,
+        resume: null,
+        applicationDate: new Date('2026-08-30T09:00:00.000Z'),
+        company: { id: 'c1', name: 'Acme' },
+      },
+    ]);
+    prisma.linkedInContact.findMany.mockResolvedValue([]);
+    prisma.resume.findMany.mockResolvedValue([
+      {
+        id: 'r1',
+        title: 'Backend',
+        createdAt: new Date('2026-08-29T12:00:00.000Z'),
+      },
+    ]);
+    prisma.csvImport.findMany.mockResolvedValue([
+      {
+        id: 'i1',
+        filename: 'companies.csv',
+        createdAt: new Date('2026-08-28T12:00:00.000Z'),
+      },
+    ]);
+
+    const stats = await service.stats(userId);
+
+    expect(stats.recentActivity.map((item) => item.id)).toEqual([
+      'application-a1',
+      'resume-r1',
+      'import-i1',
+    ]);
+    expect(stats.recentActivity[0]).toMatchObject({
+      type: 'application',
+      label: 'Applied to Acme',
+      href: '/companies/c1',
+    });
   });
 
   it('returns only remaining unapplied companies for today', async () => {
