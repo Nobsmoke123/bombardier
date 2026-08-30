@@ -21,6 +21,10 @@ describe('ImportsService', () => {
     },
     company: {
       createMany: vi.fn(),
+      findMany: vi.fn(),
+    },
+    application: {
+      createMany: vi.fn(),
     },
   };
   const storage = {
@@ -96,6 +100,8 @@ describe('ImportsService', () => {
       duplicatesRemoved: 1,
     });
     prisma.company.createMany.mockResolvedValue({ count: 1 });
+    prisma.company.findMany.mockResolvedValue([{ id: '44444444-4444-4444-4444-444444444444' }]);
+    prisma.application.createMany.mockResolvedValue({ count: 1 });
     prisma.csvImport.update.mockResolvedValue(record);
 
     await service.processJob({ importId: record.id, userId });

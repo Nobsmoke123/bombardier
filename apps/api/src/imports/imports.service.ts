@@ -7,6 +7,7 @@ import {
 import type { CsvImportPublic } from '@job-tracker/types';
 import { CsvImportStatus, type CsvImport } from '@prisma/client';
 import { Queue } from 'bullmq';
+import { ensureDefaultApplications } from '../companies/ensure-applications.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { assertImportFileKey } from '../storage/storage.keys.js';
 import { StorageService } from '../storage/storage.service.js';
@@ -101,6 +102,7 @@ export class ImportsService {
         })),
         skipDuplicates: true,
       });
+      await ensureDefaultApplications(this.prisma, data.userId);
 
       await this.prisma.csvImport.update({
         where: { id: record.id },

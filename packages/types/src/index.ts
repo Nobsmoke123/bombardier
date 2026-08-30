@@ -95,3 +95,55 @@ export type CreateCsvImportRequest = {
   filename: string;
   objectKey: string;
 };
+
+export const APPLICATION_STATUSES = [
+  "NOT_APPLIED",
+  "APPLIED",
+  "HR_STAGE",
+  "TECHNICAL",
+  "FINAL_INTERVIEW",
+  "ACCEPTED",
+  "REJECTED",
+] as const;
+
+export type ApplicationStatus = (typeof APPLICATION_STATUSES)[number];
+
+export type ApplicationPublic = {
+  id: string;
+  role: string;
+  resumeId: string | null;
+  resumeTitle: string | null;
+  coverLetter: string | null;
+  linkedinMessage: string | null;
+  applied: boolean;
+  linkedinOutreach: boolean;
+  connectionCount: number;
+  applicationDate: string | null;
+  status: ApplicationStatus;
+};
+
+export type CompanyPublic = {
+  id: string;
+  name: string;
+  website: string | null;
+  industry: string | null;
+  createdAt: string;
+  application: ApplicationPublic;
+};
+
+export type CompanyListResponse = {
+  items: CompanyPublic[];
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
+export type UpdateCompanyRequest = {
+  role?: string;
+  resumeId?: string | null;
+  coverLetter?: string | null;
+  linkedinMessage?: string | null;
+  status?: ApplicationStatus;
+  applicationDate?: string | null;
+  linkedinOutreach?: boolean;
+};
