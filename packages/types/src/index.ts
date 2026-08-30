@@ -31,3 +31,24 @@ export type LoginRequest = {
   email: string;
   password: string;
 };
+
+export type StorageFolder = "resumes" | "imports";
+
+export type PresignUploadRequest = {
+  folder: StorageFolder;
+  filename: string;
+  contentType: string;
+};
+
+export type PresignUploadResponse = {
+  uploadUrl: string;
+  key: string;
+  headers: Record<string, string>;
+  expiresIn: number;
+};
+
+export type PresignViewResponse = {
+  viewUrl: string;
+  key: string;
+  expiresIn: number;
+};

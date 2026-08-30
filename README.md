@@ -8,7 +8,7 @@ Personal job application tracking platform (ATS MVP).
 - **API:** NestJS, Prisma, JWT
 - **Data:** Neon PostgreSQL (local Postgres via Docker)
 - **Jobs:** BullMQ + Redis (later milestone)
-- **Storage:** Cloudflare R2 via presigned URLs (later milestone)
+- **Storage:** Cloudflare R2 via presigned URLs (files never pass through the API)
 
 ## Prerequisites
 
@@ -34,4 +34,34 @@ pnpm dev
 
 ## Auth
 
-JWT is issued by the API and stored in an **HTTP-only cookie**. The browser never writes the token to `localStorage`. Files are never uploaded through the API — later milestones use Cloudflare R2 presigned URLs.
+JWT is issued by the API and stored in an **HTTP-only cookie**. The browser never writes the token to `localStorage`.
+
+## Storage
+
+The API never receives file bytes. The browser:
+
+1. Calls `POST /storage/presign` for a short-lived PUT URL
+2. Uploads the PDF or CSV **directly to Cloudflare R2**
+3. Asks the API to persist metadata (later milestones)
+4. Calls `GET /storage/view?key=...` for a 15-minute signed GET URL
+
+Object keys only:
+
+```text
+users/{userId}/resumes/{uuid}.pdf
+users/{userId}/imports/{uuid}.csv
+```
+
+Configure the R2 bucket CORS so the web origin can `PUT` and `GET`:
+
+```json
+[
+  {
+    "AllowedOrigins": ["http://localhost:3000"],
+    "AllowedMethods": ["GET", "PUT", "HEAD"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
