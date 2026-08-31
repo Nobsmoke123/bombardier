@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { HeroReveal } from "./fade-up";
+import { GLOBE_ROLES } from "./globe-roles";
 
 const Earth = dynamic(
   () => import("./Earth").then((mod) => mod.Earth),
@@ -11,7 +12,7 @@ const Earth = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="h-[22rem] w-full bg-surface sm:h-[28rem] lg:h-[min(36rem,72vh)]"
+        className="mx-auto aspect-square w-full max-w-[36rem] lg:max-w-none"
         aria-hidden="true"
       />
     ),
@@ -22,8 +23,8 @@ export function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-8">
+    <section className="relative overflow-visible">
+      <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl items-center gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.15fr)] lg:gap-4">
         <div className="max-w-xl">
           <HeroReveal>
             <p className="inline-flex border border-line bg-surface px-3 py-1 text-xs tracking-wide text-amber">
@@ -58,7 +59,7 @@ export function Hero() {
         </div>
 
         <motion.div
-          className="relative"
+          className="relative overflow-visible"
           initial={reduce ? false : { opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
@@ -66,8 +67,9 @@ export function Hero() {
         >
           <Earth />
           <p className="sr-only">
-            Drag to rotate the globe. Continents are shown as glowing orange
-            points. Zoom is disabled.
+            Drag to rotate the globe. Continents are shown as glowing points.
+            Ten roles travel on orbital paths: {GLOBE_ROLES.join(", ")}. Zoom is
+            disabled.
           </p>
         </motion.div>
       </div>
