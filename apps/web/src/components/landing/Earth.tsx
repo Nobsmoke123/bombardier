@@ -4,7 +4,7 @@ import { Html, Line, OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AdditiveBlending,
   BackSide,
@@ -16,7 +16,7 @@ import {
   type Camera,
 } from "three";
 import { GLOBE_ROLES } from "./globe-roles";
-import { createLandPositions, createStarPositions } from "./land-points";
+import { createLandPositions, createStarPositions, loadLandMask } from "./land-points";
 
 type OrbitDef = {
   normal: [number, number, number];
@@ -129,17 +129,36 @@ function Continents({
   soft: string;
   additive: boolean;
 }) {
-  const core = useMemo(() => {
-    const geo = new BufferGeometry();
-    geo.setAttribute("position", new BufferAttribute(createLandPositions(1.005, 1.0, 11), 3));
-    return geo;
-  }, []);
-  const halo = useMemo(() => {
-    const geo = new BufferGeometry();
-    geo.setAttribute("position", new BufferAttribute(createLandPositions(1.018, 1.45, 29), 3));
-    return geo;
-  }, []);
+  const [core, setCore] = useState<BufferGeometry | null>(null);
+  const [halo, setHalo] = useState<BufferGeometry | null>(null);
   const blending = additive ? AdditiveBlending : undefined;
+
+  useEffect(() => {
+    let cancelled = false;
+    const geometries: BufferGeometry[] = [];
+
+    loadLandMask().then(() => {
+      const land = new BufferGeometry();
+      land.setAttribute("position", new BufferAttribute(createLandPositions(1.005, 0.7, 11), 3));
+      const glow = new BufferGeometry();
+      glow.setAttribute("position", new BufferAttribute(createLandPositions(1.018, 1.15, 29), 3));
+      if (cancelled) {
+        land.dispose();
+        glow.dispose();
+        return;
+      }
+      geometries.push(land, glow);
+      setCore(land);
+      setHalo(glow);
+    });
+
+    return () => {
+      cancelled = true;
+      for (const geometry of geometries) geometry.dispose();
+    };
+  }, []);
+
+  if (!core) return null;
 
   return (
     <group>
@@ -154,7 +173,7 @@ function Continents({
           blending={blending}
         />
       </points>
-      {additive ? (
+      {additive && halo ? (
         <points geometry={halo}>
           <pointsMaterial
             color={soft}
