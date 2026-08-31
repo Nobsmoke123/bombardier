@@ -12,6 +12,7 @@ import {
   BufferGeometry,
   Color,
   Group,
+  NormalBlending,
   Vector3,
   type Camera,
 } from "three";
@@ -131,7 +132,6 @@ function Continents({
 }) {
   const [core, setCore] = useState<BufferGeometry | null>(null);
   const [halo, setHalo] = useState<BufferGeometry | null>(null);
-  const blending = additive ? AdditiveBlending : undefined;
 
   useEffect(() => {
     let cancelled = false;
@@ -162,7 +162,7 @@ function Continents({
 
   return (
     <group>
-      <points geometry={core}>
+      <points key={additive ? "land-glow" : "land-ink"} geometry={core}>
         <pointsMaterial
           color={color}
           size={0.015}
@@ -170,7 +170,7 @@ function Continents({
           transparent
           opacity={additive ? 0.95 : 0.88}
           depthWrite={false}
-          blending={blending}
+          blending={additive ? AdditiveBlending : NormalBlending}
         />
       </points>
       {additive && halo ? (
