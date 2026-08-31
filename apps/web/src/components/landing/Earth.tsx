@@ -402,11 +402,8 @@ function Globe({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean })
 }
 
 function Scene({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean }) {
-  const colors = palette(dark);
-
   return (
     <>
-      <color attach="background" args={[colors.bg]} />
       <ambientLight intensity={dark ? 0.28 : 0.5} />
       <directionalLight position={[3, 2, 4]} intensity={dark ? 0.55 : 0.7} color="#fff7ed" />
       {dark ? <Stars /> : null}
@@ -419,6 +416,10 @@ function Scene({ reduceMotion, dark }: { reduceMotion: boolean; dark: boolean })
         autoRotate={!reduceMotion}
         autoRotateSpeed={0.35}
         rotateSpeed={0.55}
+        minDistance={5.4}
+        maxDistance={5.4}
+        minPolarAngle={Math.PI * 0.22}
+        maxPolarAngle={Math.PI * 0.78}
       />
     </>
   );
@@ -430,12 +431,13 @@ export function Earth() {
   const dark = resolvedTheme !== "light";
 
   return (
-    <div className="relative h-[22rem] w-full sm:h-[28rem] lg:h-[min(36rem,72vh)]">
+    <div className="relative mx-auto aspect-square w-full max-w-[36rem] overflow-visible lg:max-w-none">
       <Canvas
-        camera={{ position: [0.28, 0.12, 2.85], fov: 40 }}
+        camera={{ position: [0, 0.02, 5.4], fov: 36 }}
         dpr={[1, 1.6]}
-        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        gl={{ antialias: true, alpha: true, premultipliedAlpha: true, powerPreference: "high-performance" }}
         onCreated={({ gl }) => {
+          gl.setClearColor(0x000000, 0);
           gl.domElement.style.touchAction = "none";
         }}
       >
