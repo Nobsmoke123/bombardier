@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 const LINKS = [
   { href: "#features", label: "Features" },
-  { href: "#analytics", label: "Analytics" },
+  { href: "#queue", label: "Queue" },
   { href: "#about", label: "About" },
 ] as const;
 
@@ -25,16 +25,16 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/70 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5 text-sm tracking-wide text-ink">
+    <header className="sticky top-0 z-40 border-b border-line/70 bg-paper/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-12 max-w-6xl items-center justify-between gap-4 px-5 sm:h-14 sm:px-8">
+        <Link href="/" className="flex items-center gap-2.5 text-sm text-ink">
           <span className="text-ink">
             <LogoMark />
           </span>
-          <span className="font-display text-lg">Bombardier</span>
+          <span className="font-display text-lg tracking-tight">Bombardier</span>
         </Link>
 
-        <nav aria-label="Landing" className="hidden items-center gap-8 text-sm text-muted md:flex">
+        <nav aria-label="Landing" className="hidden items-center gap-8 text-[13px] text-ink/70 md:flex">
           {LINKS.map((link) => (
             <a key={link.href} href={link.href} className="transition-colors duration-150 hover:text-ink">
               {link.label}
@@ -44,12 +44,12 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <ThemeToggle />
-          <Link href="/login" className="text-sm text-muted transition-colors duration-150 hover:text-ink">
+          <Link href="/login" className="text-[13px] text-ink/70 transition-colors duration-150 hover:text-ink">
             Login
           </Link>
           <Link
             href="/register"
-            className="bg-amber px-4 py-2 text-sm text-paper transition-opacity duration-150 hover:opacity-90"
+            className="bg-ink px-4 py-1.5 text-[13px] text-paper transition-opacity duration-150 hover:opacity-80"
           >
             Get Started
           </Link>
@@ -88,7 +88,7 @@ export function Navbar() {
           <Link href="/login" className="text-sm text-ink">
             Login
           </Link>
-          <Link href="/register" className="bg-amber px-4 py-2.5 text-center text-sm text-paper">
+          <Link href="/register" className="bg-ink px-4 py-2.5 text-center text-sm text-paper">
             Get Started
           </Link>
         </nav>

@@ -3,10 +3,16 @@ import type { NextRequest } from "next/server";
 import { AUTH_COOKIE_NAME } from "@/lib/auth-cookie";
 
 const PUBLIC_PATHS = new Set(["/", "/login", "/register"]);
+const ALWAYS_PUBLIC = new Set(["/privacy"]);
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+
+  if (ALWAYS_PUBLIC.has(pathname)) {
+    return NextResponse.next();
+  }
+
   const isPublic = PUBLIC_PATHS.has(pathname);
 
   if (!token && !isPublic) {

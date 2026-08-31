@@ -1,52 +1,44 @@
-import { FadeUp } from "./fade-up";
-
-const FEATURES = [
+const REST = [
   {
-    title: "CSV Deduplication",
-    body: "Normalize names, drop in-file repeats, and skip companies you already track.",
+    title: "CSV import",
+    body: "Unlimited files. In-file repeats and companies you already have are dropped.",
   },
   {
-    title: "Resume Performance Analytics",
-    body: "See which version earns interviews and offers — not just downloads.",
+    title: "Resume versions",
+    body: "Each application is tied to the file you sent, so interview rate is per version.",
   },
   {
-    title: "LinkedIn Outreach Tracking",
-    body: "Log every contact, connection state, and conversation without another spreadsheet.",
+    title: "LinkedIn log",
+    body: "Contact, connection state, and the last note sit on the company record.",
   },
   {
-    title: "Interview Pipeline",
-    body: "Move roles from applied to HR, technical, final, and offer in one status line.",
-  },
-  {
-    title: "Daily Application Targets",
-    body: "Today’s queue is sized to the number you actually intend to send.",
-  },
-  {
-    title: "Global Company Database",
-    body: "Search, filter, and open any company you imported — one record, one application.",
+    title: "Status line",
+    body: "Applied, HR, technical, final, offer — one field, not a second board.",
   },
 ] as const;
 
 export function Features() {
   return (
-    <section id="features" className="scroll-mt-24 border-t border-line py-24">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <FadeUp>
-          <p className="text-sm text-amber">Features</p>
-          <h2 className="mt-3 max-w-xl font-display text-4xl tracking-tight text-ink sm:text-5xl">
-            The operating system for a deliberate search.
+    <section id="features" className="scroll-mt-24 bg-surface py-28">
+      <div className="mx-auto grid max-w-6xl gap-16 px-5 sm:px-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-24">
+        <div>
+          <h2 className="font-display text-4xl tracking-tight text-ink sm:text-5xl">
+            Today’s queue is the product.
           </h2>
-        </FadeUp>
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((feature, index) => (
-            <FadeUp key={feature.title} delay={index * 0.04}>
-              <article className="h-full border border-line bg-surface p-6 transition-transform duration-150 hover:-translate-y-1">
-                <h3 className="font-display text-xl text-ink">{feature.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted">{feature.body}</p>
-              </article>
-            </FadeUp>
-          ))}
+          <p className="mt-6 max-w-[44ch] text-[15px] leading-relaxed text-muted">
+            You set how many applications you intend to send. The list is cut to
+            that length. When you mark one applied, the next company takes its
+            place.
+          </p>
         </div>
+        <ul>
+          {REST.map((item) => (
+            <li key={item.title} className="border-t border-line py-6">
+              <h3 className="text-sm text-ink">{item.title}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted">{item.body}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

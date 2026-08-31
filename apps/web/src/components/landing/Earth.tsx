@@ -96,13 +96,13 @@ function writeOrbitPoint(
 
 function palette(dark: boolean) {
   return {
-    land: dark ? "#f97316" : "#1c1915",
-    landSoft: dark ? "#fdba74" : "#ea580c",
-    ocean: dark ? "#08080c" : "#f3ebdd",
+    land: dark ? "#f97316" : "#000000",
+    landSoft: dark ? "#fdba74" : "#3a3a3c",
+    ocean: dark ? "#08080c" : "#f5f5f7",
     arc: dark ? "#fdba74" : "#c2410c",
     node: dark ? "#fff7ed" : "#9a3412",
     glow: dark ? "#f97316" : "#c2410c",
-    bg: dark ? "#09090b" : "#f4efe6",
+    bg: dark ? "#09090b" : "#ffffff",
     star: "#fafafa",
   };
 }

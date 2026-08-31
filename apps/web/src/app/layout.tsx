@@ -17,7 +17,7 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   title: "Bombardier",
   description:
-    "Track every application, measure what works, and manage your global job search from one dashboard.",
+    "A personal job-search tracker. Import companies, log the resume you sent, and work a daily queue.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,80 +1,46 @@
-import { FadeUp } from "./fade-up";
-
-const STATUSES = [
-  { label: "Applied", tone: "text-ink border-line" },
-  { label: "HR stage", tone: "text-amber border-amber/40" },
-  { label: "Technical", tone: "text-ink border-line" },
-  { label: "Rejected", tone: "text-muted border-line" },
+const SAMPLE = [
+  { name: "Jane Street", role: "Backend Engineer", industry: "Markets" },
+  { name: "Cloudflare", role: "Platform Engineer", industry: "Infrastructure" },
+  { name: "Linear", role: "Fullstack Engineer", industry: "Software" },
 ] as const;
-
-const FUNNEL = [
-  { label: "Applied", width: "100%" },
-  { label: "HR", width: "42%" },
-  { label: "Technical", width: "24%" },
-  { label: "Offer", width: "9%" },
-] as const;
-
-const LINE = "M8 72 C 40 68, 56 40, 88 44 S 140 20, 176 28 220 54, 248 36";
 
 export function DashboardPreview() {
   return (
-    <section id="analytics" className="scroll-mt-24 border-t border-line py-24">
+    <section id="queue" className="scroll-mt-24 bg-paper py-28">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <FadeUp>
-          <p className="text-sm text-amber">Analytics</p>
-          <h2 className="mt-3 font-display text-4xl tracking-tight text-ink sm:text-5xl">
-            A dashboard that reads like a briefing.
-          </h2>
-        </FadeUp>
+        <p className="text-[13px] text-muted">Preview · sample data</p>
+        <h2 className="mt-3 font-display text-5xl tracking-tight text-ink">Today.</h2>
+        <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted">
+          The signed-in dashboard uses this layout. The companies below are
+          sample rows so you can see the list before you import your own.
+        </p>
 
-        <FadeUp delay={0.08} className="mt-12 border border-line bg-surface p-5 sm:p-8">
-          <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
+        <div className="mt-14 max-w-3xl border-t border-line pt-8">
+          <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm text-muted">Applications · last 14 days</p>
-              <svg viewBox="0 0 256 88" className="mt-6 h-40 w-full" role="img" aria-label="Mock line chart of applications">
-                <path d="M8 80h240" className="stroke-line" strokeWidth="1" fill="none" />
-                <path d={LINE} fill="none" className="stroke-amber" strokeWidth="2" />
-                <circle cx="248" cy="36" r="3" className="fill-amber" />
-              </svg>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {STATUSES.map((status) => (
-                  <span
-                    key={status.label}
-                    className={`border px-2.5 py-1 text-xs ${status.tone}`}
-                  >
-                    {status.label}
-                  </span>
-                ))}
-              </div>
+              <p className="text-sm text-muted">Daily target</p>
+              <p className="mt-2 font-display text-4xl tracking-tight text-ink">2 of 5</p>
             </div>
-
-            <div className="grid gap-6">
-              <article className="border border-line p-5">
-                <p className="text-sm text-muted">Resume success</p>
-                <p className="mt-3 font-display text-2xl text-ink">Backend — Spring</p>
-                <p className="mt-2 text-sm text-muted">
-                  41 applied · 6 interviews · 1 offer
-                </p>
-                <div className="mt-4 h-1.5 bg-paper">
-                  <div className="h-full w-2/3 bg-amber" />
-                </div>
-              </article>
-              <article className="border border-line p-5">
-                <p className="text-sm text-muted">Interview funnel</p>
-                <ul className="mt-4 grid gap-3">
-                  {FUNNEL.map((row) => (
-                    <li key={row.label} className="grid grid-cols-[5.5rem_1fr] items-center gap-3 text-sm">
-                      <span className="text-muted">{row.label}</span>
-                      <div className="h-2 bg-paper">
-                        <div className="h-full bg-ink/80" style={{ width: row.width }} />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            </div>
+            <p className="text-sm text-muted">3 remaining on this sample day</p>
           </div>
-        </FadeUp>
+
+          <ol className="mt-10 divide-y divide-line border-t border-line">
+            {SAMPLE.map((company, index) => (
+              <li key={company.name} className="flex items-baseline justify-between gap-4 py-4">
+                <div>
+                  <p>
+                    <span className="mr-3 text-sm text-muted">{index + 1}</span>
+                    {company.name}
+                  </p>
+                  <p className="mt-1 text-sm text-muted">
+                    {company.role} · {company.industry}
+                  </p>
+                </div>
+                <span className="shrink-0 text-sm text-muted">Open</span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );

@@ -39,9 +39,9 @@ function ThemedToaster() {
       closeButton
       toastOptions={{
         style: {
-          background: dark ? "#111113" : "#FFFBF4",
-          color: dark ? "#FAFAFA" : "#1C1915",
-          border: `1px solid ${dark ? "#27272A" : "#D8D0C2"}`,
+          background: dark ? "#111113" : "#FFFFFF",
+          color: dark ? "#FAFAFA" : "#000000",
+          border: `1px solid ${dark ? "#27272A" : "#D2D2D7"}`,
           boxShadow: "none",
           borderRadius: "2px",
         },
